@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_jpQTIITbEeOIEtdKXcpHUg" elementId="org.eclipse.e4.ide.application" bindingContexts="_jpQTKITbEeOIEtdKXcpHUg">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_jpQTIYTbEeOIEtdKXcpHUg" label="DiversityBenchmark" width="500" height="400">
+    <children xsi:type="advanced:PerspectiveStack" xmi:id="_jpQ6RITbEeOIEtdKXcpHUg">
+      <children xsi:type="advanced:Perspective" xmi:id="_jpQ6RYTbEeOIEtdKXcpHUg">
+        <children xsi:type="basic:PartSashContainer" xmi:id="_jpQ6RoTbEeOIEtdKXcpHUg" horizontal="true">
+          <children xsi:type="basic:PartSashContainer" xmi:id="_q-ur4ITbEeOIEtdKXcpHUg" elementId="diversitybenchmark.partsashcontainer.0">
+            <children xsi:type="basic:PartStack" xmi:id="_-P4McITbEeOIEtdKXcpHUg" elementId="diversitybenchmark.partstack.4">
+              <children xsi:type="basic:Part" xmi:id="_-dET4ITbEeOIEtdKXcpHUg" elementId="diversitybenchmark.part.3" contributionURI="bundleclass://DiversityBenchmark/DiversityBenchmark.parts.ConfigPart" label="Configuration"/>
+            </children>
+          </children>
+          <children xsi:type="basic:PartSashContainer" xmi:id="_rVBE8ITbEeOIEtdKXcpHUg" elementId="diversitybenchmark.partsashcontainer.1" horizontal="true">
+            <children xsi:type="basic:PartStack" xmi:id="_srAAcITbEeOIEtdKXcpHUg" elementId="diversitybenchmark.partstack.0">
+              <children xsi:type="basic:Part" xmi:id="_JOJQ0ITcEeOIEtdKXcpHUg" elementId="diversitybenchmark.part.4" label="Chart"/>
+            </children>
+            <children xsi:type="basic:PartStack" xmi:id="_PZRWUITcEeOIEtdKXcpHUg" elementId="diversitybenchmark.partstack.2">
+              <children xsi:type="basic:Part" xmi:id="_PnTyUITcEeOIEtdKXcpHUg" elementId="diversitybenchmark.part.0" label="Data"/>
+            </children>
+          </children>
+        </children>
+      </children>
+    </children>
+    <mainMenu xmi:id="_jpQ6PYTbEeOIEtdKXcpHUg" elementId="menu:org.eclipse.ui.main.menu">
+      <children xsi:type="menu:Menu" xmi:id="_jpQ6PoTbEeOIEtdKXcpHUg" label="File">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_jpQ6P4TbEeOIEtdKXcpHUg" label="Open" iconURI="platform:/plugin/DiversityBenchmark/icons/sample.gif" command="_jpQ6NITbEeOIEtdKXcpHUg"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_jpQ6QITbEeOIEtdKXcpHUg" label="Save" iconURI="platform:/plugin/DiversityBenchmark/icons/save_edit.gif" command="_jpQ6N4TbEeOIEtdKXcpHUg"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_jpQ6QYTbEeOIEtdKXcpHUg" label="Quit" command="_jpQ6MITbEeOIEtdKXcpHUg"/>
+      </children>
+      <children xsi:type="menu:Menu" xmi:id="_jpQ6QoTbEeOIEtdKXcpHUg" label="Help">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_jpQ6Q4TbEeOIEtdKXcpHUg" label="About" command="_jpQ6OoTbEeOIEtdKXcpHUg"/>
+      </children>
+    </mainMenu>
+    <trimBars xmi:id="_jpRhQITbEeOIEtdKXcpHUg">
+      <children xsi:type="menu:ToolBar" xmi:id="_jpRhQYTbEeOIEtdKXcpHUg" elementId="toolbar:org.eclipse.ui.main.toolbar">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_jpRhQoTbEeOIEtdKXcpHUg" iconURI="platform:/plugin/DiversityBenchmark/icons/sample.gif" command="_jpQ6NITbEeOIEtdKXcpHUg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_jpRhQ4TbEeOIEtdKXcpHUg" iconURI="platform:/plugin/DiversityBenchmark/icons/save_edit.gif" command="_jpQ6N4TbEeOIEtdKXcpHUg"/>
+      </children>
+    </trimBars>
+  </children>
+  <handlers xmi:id="_jpQ6MYTbEeOIEtdKXcpHUg" contributionURI="bundleclass://DiversityBenchmark/DiversityBenchmark.handlers.QuitHandler" command="_jpQ6MITbEeOIEtdKXcpHUg"/>
+  <handlers xmi:id="_jpQ6NYTbEeOIEtdKXcpHUg" contributionURI="bundleclass://DiversityBenchmark/DiversityBenchmark.handlers.OpenHandler" command="_jpQ6NITbEeOIEtdKXcpHUg"/>
+  <handlers xmi:id="_jpQ6OITbEeOIEtdKXcpHUg" contributionURI="bundleclass://DiversityBenchmark/DiversityBenchmark.handlers.SaveHandler" command="_jpQ6N4TbEeOIEtdKXcpHUg"/>
+  <handlers xmi:id="_jpQ6O4TbEeOIEtdKXcpHUg" contributionURI="bundleclass://DiversityBenchmark/DiversityBenchmark.handlers.AboutHandler" command="_jpQ6OoTbEeOIEtdKXcpHUg"/>
+  <bindingTables xmi:id="_jpQ6MoTbEeOIEtdKXcpHUg" bindingContext="_jpQTKITbEeOIEtdKXcpHUg">
+    <bindings xmi:id="_jpQ6M4TbEeOIEtdKXcpHUg" keySequence="M1+Q" command="_jpQ6MITbEeOIEtdKXcpHUg"/>
+    <bindings xmi:id="_jpQ6NoTbEeOIEtdKXcpHUg" keySequence="M1+O" command="_jpQ6NITbEeOIEtdKXcpHUg"/>
+    <bindings xmi:id="_jpQ6OYTbEeOIEtdKXcpHUg" keySequence="M1+S" command="_jpQ6N4TbEeOIEtdKXcpHUg"/>
+    <bindings xmi:id="_jpQ6PITbEeOIEtdKXcpHUg" keySequence="M1+A" command="_jpQ6OoTbEeOIEtdKXcpHUg"/>
+  </bindingTables>
+  <rootContext xmi:id="_jpQTKITbEeOIEtdKXcpHUg" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
+    <children xmi:id="_jpQTKYTbEeOIEtdKXcpHUg" elementId="org.eclipse.ui.contexts.window" name="In Windows"/>
+    <children xmi:id="_jpQTKoTbEeOIEtdKXcpHUg" elementId="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
+  </rootContext>
+  <commands xmi:id="_jpQ6MITbEeOIEtdKXcpHUg" elementId="org.eclipse.ui.file.exit" commandName="quitCommand"/>
+  <commands xmi:id="_jpQ6NITbEeOIEtdKXcpHUg" elementId="DiversityBenchmark.open" commandName="openCommand"/>
+  <commands xmi:id="_jpQ6N4TbEeOIEtdKXcpHUg" elementId="org.eclipse.ui.file.save" commandName="saveCommand"/>
+  <commands xmi:id="_jpQ6OoTbEeOIEtdKXcpHUg" elementId="org.eclipse.ui.help.aboutAction" commandName="aboutCommand"/>
+  <addons xmi:id="_jpQTIoTbEeOIEtdKXcpHUg" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_jpQTI4TbEeOIEtdKXcpHUg" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_jpQTJITbEeOIEtdKXcpHUg" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_jpQTJYTbEeOIEtdKXcpHUg" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_jpQTJoTbEeOIEtdKXcpHUg" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_jpQTJ4TbEeOIEtdKXcpHUg" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+</application:Application>
