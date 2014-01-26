@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -14,6 +15,10 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
@@ -25,13 +30,18 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
@@ -48,6 +58,8 @@ import DiversityBenchmark.models.Metric;
 import DiversityBenchmark.models.MetricModel;
 import DiversityBenchmark.models.SimulationParameter;
 import DiversityBenchmark.utils.Constant;
+import DiversityBenchmark.utils.ContextUtil;
+import DiversityBenchmark.utils.EventConstants;
 import DiversityBenchmark.utils.NumericValidator;
 
 public class ConfigPart extends AbstractPart {
@@ -99,6 +111,19 @@ public class ConfigPart extends AbstractPart {
 	Map<TableItem, String> tblBindding = new HashMap<TableItem, String>();
 
 	private NumericValidator validator = null;
+	private Composite composite_1;
+
+	@Inject
+	IEventBroker chart;
+
+	@Inject
+	IEclipseContext context;
+
+	@Inject
+	IEventBroker eval_start;
+
+	@Inject
+	IEventBroker broker;
 
 	/**
 	 * * This is a callback that will allow us to create the viewer and
@@ -230,7 +255,7 @@ public class ConfigPart extends AbstractPart {
 
 	}
 
-	private void addParameterFormPart(Composite parent) {
+	private void addParameterFormPart(final Composite parent) {
 		form = toolkit.createForm(parent);
 		form.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		GridLayout layout = new GridLayout();
@@ -340,6 +365,75 @@ public class ConfigPart extends AbstractPart {
 		addAlgorithmSection(parent);
 
 		addMetricSection(parent);
+
+		composite_1 = new Composite(form.getBody(), SWT.NONE);
+		composite_1.setLayout(new FillLayout(SWT.HORIZONTAL));
+		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
+				false, 1, 1));
+		toolkit.adapt(composite_1);
+		toolkit.paintBordersFor(composite_1);
+
+		final Button saveButton = new Button(composite_1, SWT.PUSH);
+		saveButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				System.out.println("Save current config");
+				FileDialog dlg = new FileDialog(saveButton.getShell(), SWT.SAVE);
+				String[] filterExt = { "*.xml" };
+				dlg.setFilterExtensions(filterExt);
+				dlg.setText("Save");
+				String path = dlg.open();
+				if (path == null)
+					return;
+				saveConfig(path);
+				// System.out.println("End simulating");
+			}
+		});
+		saveButton.setText("Save Config");
+
+		final Button loadConfig = new Button(composite_1, SWT.PUSH);
+		loadConfig.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				System.out.println("Load config");
+				FileDialog dlg = new FileDialog(loadConfig.getShell(), SWT.OPEN);
+				String[] filterExt = { "*.xml" };
+				dlg.setFilterExtensions(filterExt);
+				dlg.setText("Open");
+				String path = dlg.open();
+				if (path == null)
+					return;
+				loadConfig(path);
+			}
+		});
+		loadConfig.setText("Load Config");
+
+		link = new Link(form.getBody(), SWT.NONE);
+		link.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1,
+				1));
+		toolkit.adapt(link, true, true);
+		link.setText("<a>Advanced</a>");
+
+		link.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				AdvanceConfigPart dialog = new AdvanceConfigPart(parent
+						.getShell());
+				dialog.create();
+				if (dialog.open() == Window.OK) {
+					System.out.println("save advance config changes to file");
+				}
+			}
+		});
+
+	}
+
+	protected void saveConfig(String path) {
+		// TODO Auto-generated method stub
+
+	}
+
+	protected void loadConfig(String path) {
+		// TODO Auto-generated method stub
 
 	}
 
@@ -535,6 +629,90 @@ public class ConfigPart extends AbstractPart {
 		//
 		// GridDataFactory.fillDefaults().grab(true, true)
 		// .applyTo(friendsViewer.getTable());
+
+	}
+
+	@Inject
+	@Optional
+	void updateMetricHandler(
+			@UIEventTopic(EventConstants.METRIC_OBSERVER_UPDATE_UPDATED) String s) {
+		// start simulate
+		System.out.println("Update metrics to context");
+		ContextUtil.updateContext(context, Constant.METRIC, selectedMetric);
+
+		System.out.println("Update observer to context");
+		ContextUtil.updateContext(context, Constant.OBSERVER,
+				observerValues[index]);
+
+	}
+
+	@Inject
+	@Optional
+	void evaluateHandler(
+			@UIEventTopic(EventConstants.FUNCTION_SIMULATING_START) String s) {
+		System.out.println("Start Evaluating...");
+		startEvaluating();
+		// System.out.println(selectedAlgorithm.toString());
+		System.out.println("End Evaluating");
+	}
+
+	private void startEvaluating() {
+
+		// TODO: generate algor.xml and prop.xml
+
+		// sent signal to simulate model
+		eval_start.send(EventConstants.DATA_SIMULATING_START, "start");
+
+		// run algorithms;
+		/*
+		 * if (model != null) { Experiment_Evaluate eval = new
+		 * Experiment_Evaluate(); eval.SetFileConfig(Constant.ALGO_CONFIG_FILE);
+		 * eval.setModel(model); eval.run(); } else {
+		 * System.out.println("No input data"); }
+		 * importResult(Constant.RESULT_FILE);
+		 */
+
+	}
+
+	@Inject
+	@Optional
+	void updateHandler(
+			@UIEventTopic(EventConstants.DATA_SIMULATING_START) String s) {
+		// start simulate
+		System.out.println("Simulating data...");
+		startSimulate();
+		System.out.println("Data Generated");
+		// broker.send(EventConstants.DATA_UPDATE_CLEAR, 0);
+
+		Double minvalue = simuPara.getMinObserverValue();
+		Double maxValue = simuPara.getMaxObserverValue();
+		Double step = simuPara.getStepObserverValue();
+		if (minvalue == null || maxValue == null) {
+			// throw new IllegalArgumentException();
+			return;
+		}
+		double interval = maxValue - minvalue;
+		String factor = observerValues[index];
+
+		double start = minvalue;
+		int evalID = 0;
+		System.out.println("Start Evaluating...");
+		while (start <= maxValue) {
+
+			double value = start;
+			// System.out.println("value: " + value + ", key: " + attribute);
+			// test(initHashMap(value, attribute));
+
+			// TODO calling experiment logic to generate the data
+
+			start += step;
+			evalID++;
+		}
+		System.out.println("End Evaluting...");
+	}
+
+	private void startSimulate() {
+		// TODO Auto-generated method stub
 
 	}
 

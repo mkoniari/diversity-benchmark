@@ -10,8 +10,8 @@
             </children>
           </children>
           <children xsi:type="basic:PartSashContainer" xmi:id="_rVBE8ITbEeOIEtdKXcpHUg" elementId="diversitybenchmark.partsashcontainer.1" horizontal="true">
-            <children xsi:type="basic:PartStack" xmi:id="_srAAcITbEeOIEtdKXcpHUg" elementId="diversitybenchmark.partstack.0">
-              <children xsi:type="basic:Part" xmi:id="_JOJQ0ITcEeOIEtdKXcpHUg" elementId="diversitybenchmark.part.4" label="Chart"/>
+            <children xsi:type="basic:PartStack" xmi:id="_srAAcITbEeOIEtdKXcpHUg" elementId="diversitybenchmark.partstack.chart">
+              <children xsi:type="basic:Part" xmi:id="_JOJQ0ITcEeOIEtdKXcpHUg" elementId="diversitybenchmark.part.4" toBeRendered="false" visible="false" label="Chart"/>
             </children>
             <children xsi:type="basic:PartStack" xmi:id="_PZRWUITcEeOIEtdKXcpHUg" elementId="diversitybenchmark.partstack.2">
               <children xsi:type="basic:Part" xmi:id="_PnTyUITcEeOIEtdKXcpHUg" elementId="diversitybenchmark.part.0" label="Data"/>
@@ -22,8 +22,8 @@
     </children>
     <mainMenu xmi:id="_jpQ6PYTbEeOIEtdKXcpHUg" elementId="menu:org.eclipse.ui.main.menu">
       <children xsi:type="menu:Menu" xmi:id="_jpQ6PoTbEeOIEtdKXcpHUg" label="File">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_jpQ6P4TbEeOIEtdKXcpHUg" label="Open" iconURI="platform:/plugin/DiversityBenchmark/icons/sample.gif" command="_jpQ6NITbEeOIEtdKXcpHUg"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_jpQ6QITbEeOIEtdKXcpHUg" label="Save" iconURI="platform:/plugin/DiversityBenchmark/icons/save_edit.gif" command="_jpQ6N4TbEeOIEtdKXcpHUg"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_jpQ6P4TbEeOIEtdKXcpHUg" toBeRendered="false" visible="false" label="Open" iconURI="platform:/plugin/DiversityBenchmark/icons/sample.gif" command="_jpQ6NITbEeOIEtdKXcpHUg"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_jpQ6QITbEeOIEtdKXcpHUg" toBeRendered="false" visible="false" label="Save" iconURI="platform:/plugin/DiversityBenchmark/icons/save_edit.gif" command="_jpQ6N4TbEeOIEtdKXcpHUg"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_jpQ6QYTbEeOIEtdKXcpHUg" label="Quit" command="_jpQ6MITbEeOIEtdKXcpHUg"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_jpQ6QoTbEeOIEtdKXcpHUg" label="Help">
@@ -32,8 +32,9 @@
     </mainMenu>
     <trimBars xmi:id="_jpRhQITbEeOIEtdKXcpHUg">
       <children xsi:type="menu:ToolBar" xmi:id="_jpRhQYTbEeOIEtdKXcpHUg" elementId="toolbar:org.eclipse.ui.main.toolbar">
-        <children xsi:type="menu:HandledToolItem" xmi:id="_jpRhQoTbEeOIEtdKXcpHUg" iconURI="platform:/plugin/DiversityBenchmark/icons/sample.gif" command="_jpQ6NITbEeOIEtdKXcpHUg"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_jpRhQ4TbEeOIEtdKXcpHUg" iconURI="platform:/plugin/DiversityBenchmark/icons/save_edit.gif" command="_jpQ6N4TbEeOIEtdKXcpHUg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_jpRhQoTbEeOIEtdKXcpHUg" toBeRendered="false" visible="false" iconURI="platform:/plugin/DiversityBenchmark/icons/sample.gif" command="_jpQ6NITbEeOIEtdKXcpHUg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_jpRhQ4TbEeOIEtdKXcpHUg" toBeRendered="false" visible="false" iconURI="platform:/plugin/DiversityBenchmark/icons/save_edit.gif" command="_jpQ6N4TbEeOIEtdKXcpHUg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_Od-a4IbNEeOLPaxBmMFS0g" elementId="diversitybenchmark.handledtoolitem.0" label="Evaluate" iconURI="platform:/plugin/DiversityBenchmark/icons/evaluate_16.png" tooltip="Run Evaluation" command="_1hQCIIbNEeOLPaxBmMFS0g"/>
       </children>
     </trimBars>
   </children>
@@ -41,6 +42,7 @@
   <handlers xmi:id="_jpQ6NYTbEeOIEtdKXcpHUg" contributionURI="bundleclass://DiversityBenchmark/DiversityBenchmark.handlers.OpenHandler" command="_jpQ6NITbEeOIEtdKXcpHUg"/>
   <handlers xmi:id="_jpQ6OITbEeOIEtdKXcpHUg" contributionURI="bundleclass://DiversityBenchmark/DiversityBenchmark.handlers.SaveHandler" command="_jpQ6N4TbEeOIEtdKXcpHUg"/>
   <handlers xmi:id="_jpQ6O4TbEeOIEtdKXcpHUg" contributionURI="bundleclass://DiversityBenchmark/DiversityBenchmark.handlers.AboutHandler" command="_jpQ6OoTbEeOIEtdKXcpHUg"/>
+  <handlers xmi:id="_s1ek0IbNEeOLPaxBmMFS0g" elementId="diversitybenchmark.handler.evaluate" contributionURI="bundleclass://DiversityBenchmark/DiversityBenchmark.handlers.EvaluateHandler" command="_1hQCIIbNEeOLPaxBmMFS0g"/>
   <bindingTables xmi:id="_jpQ6MoTbEeOIEtdKXcpHUg" bindingContext="_jpQTKITbEeOIEtdKXcpHUg">
     <bindings xmi:id="_jpQ6M4TbEeOIEtdKXcpHUg" keySequence="M1+Q" command="_jpQ6MITbEeOIEtdKXcpHUg"/>
     <bindings xmi:id="_jpQ6NoTbEeOIEtdKXcpHUg" keySequence="M1+O" command="_jpQ6NITbEeOIEtdKXcpHUg"/>
@@ -55,6 +57,7 @@
   <commands xmi:id="_jpQ6NITbEeOIEtdKXcpHUg" elementId="DiversityBenchmark.open" commandName="openCommand"/>
   <commands xmi:id="_jpQ6N4TbEeOIEtdKXcpHUg" elementId="org.eclipse.ui.file.save" commandName="saveCommand"/>
   <commands xmi:id="_jpQ6OoTbEeOIEtdKXcpHUg" elementId="org.eclipse.ui.help.aboutAction" commandName="aboutCommand"/>
+  <commands xmi:id="_1hQCIIbNEeOLPaxBmMFS0g" elementId="diversitybenchmark.command.evaluate" commandName="evaluateCommand"/>
   <addons xmi:id="_jpQTIoTbEeOIEtdKXcpHUg" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_jpQTI4TbEeOIEtdKXcpHUg" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_jpQTJITbEeOIEtdKXcpHUg" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
