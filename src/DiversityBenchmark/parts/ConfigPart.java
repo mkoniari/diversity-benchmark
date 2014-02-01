@@ -1,10 +1,19 @@
 package DiversityBenchmark.parts;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -51,6 +60,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import DiversityBenchmark.models.Algorithm;
 import DiversityBenchmark.models.AlgorithmModel;
@@ -113,6 +125,9 @@ public class ConfigPart extends AbstractPart {
 	private NumericValidator validator = null;
 	private Composite composite_1;
 
+	private String propxml = "prop.xml";
+	private String algorxml = "algor.xml";
+
 	@Inject
 	IEventBroker chart;
 
@@ -124,6 +139,8 @@ public class ConfigPart extends AbstractPart {
 
 	@Inject
 	IEventBroker broker;
+	private Label lblDimentionality;
+	private Text textDimensionality;
 
 	/**
 	 * * This is a callback that will allow us to create the viewer and
@@ -191,6 +208,9 @@ public class ConfigPart extends AbstractPart {
 	}
 
 	private void generateSimuParamBinding() {
+		txtBindding.put(txtNumOfClusters, "numOfClusters");
+		txtBindding.put(txtSizeOfClusters, "sizeOfClusters");
+		txtBindding.put(textDimensionality, "dimensionality");
 		txtBindding.put(txtAGWeight, "agWeight");
 		txtBindding.put(txtGrassHopperDamping, "grassHopperDamping");
 		txtBindding.put(txtMotleyTheta, "motleyTheta");
@@ -198,6 +218,7 @@ public class ConfigPart extends AbstractPart {
 		txtBindding.put(txtMSDLambda, "msdLambda");
 		txtBindding.put(txtMMRLambda, "mmrLambda");
 		txtBindding.put(txtMaxvalue, "maxObserverValue");
+		txtBindding.put(txtMinvalue, "minObserverValue");
 		txtBindding.put(txtStep, "stepObserverValue");
 	}
 
@@ -257,8 +278,9 @@ public class ConfigPart extends AbstractPart {
 
 	private void addParameterFormPart(final Composite parent) {
 		form = toolkit.createForm(parent);
-		form.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		form.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		GridLayout layout = new GridLayout();
+		layout.horizontalSpacing = 2;
 		form.getBody().setLayout(layout);
 		layout.numColumns = 2;
 		GridData gd = new GridData();
@@ -276,7 +298,7 @@ public class ConfigPart extends AbstractPart {
 		toolkit.adapt(clusterSectionBody);
 		toolkit.paintBordersFor(clusterSectionBody);
 		clusterSection.setClient(clusterSectionBody);
-		new Label(form.getBody(), SWT.NONE);
+		// new Label(form.getBody(), SWT.NONE);
 		createClusterForm(clusterSectionBody);
 
 		// Create algorithm section
@@ -293,6 +315,7 @@ public class ConfigPart extends AbstractPart {
 		toolkit.paintBordersFor(algorithmSectionBody);
 		algorithmSection.setClient(algorithmSectionBody);
 		createAlgorithmForm(algorithmSectionBody);
+		new Label(form.getBody(), SWT.NONE);
 
 		Section observerSection = toolkit.createSection(form.getBody(),
 				Section.TITLE_BAR);
@@ -420,7 +443,7 @@ public class ConfigPart extends AbstractPart {
 						.getShell());
 				dialog.create();
 				if (dialog.open() == Window.OK) {
-					System.out.println("save advance config changes to file");
+					System.out.println("Open advanced config");
 				}
 			}
 		});
@@ -560,6 +583,17 @@ public class ConfigPart extends AbstractPart {
 		txtSizeOfClusters = new Text(parent, SWT.BORDER);
 		txtSizeOfClusters.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
 				true, false, 1, 1));
+
+		lblDimentionality = new Label(clusterSectionBody, SWT.NONE);
+		lblDimentionality.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
+				false, false, 1, 1));
+		toolkit.adapt(lblDimentionality, true, true);
+		lblDimentionality.setText("Dimentionality");
+
+		textDimensionality = new Text(clusterSectionBody, SWT.BORDER);
+		textDimensionality.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
+				true, false, 1, 1));
+		toolkit.adapt(textDimensionality, true, true);
 
 		Label lblDistribution = new Label(parent, SWT.NONE);
 		lblDistribution.setText("Distribution");
@@ -712,7 +746,65 @@ public class ConfigPart extends AbstractPart {
 	}
 
 	private void startSimulate() {
-		// TODO Auto-generated method stub
+		try {
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory
+					.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+			// root elements
+			Document doc = docBuilder.newDocument();
+
+			Element rootElement = doc.createElement("company");
+			doc.appendChild(rootElement);
+
+			// staff elements
+			Element staff = doc.createElement("Staff");
+			rootElement.appendChild(staff);
+
+			// set attribute to staff element
+			Attr attr = doc.createAttribute("id");
+			attr.setValue("1");
+			staff.setAttributeNode(attr);
+
+			// shorten way
+			// staff.setAttribute("id", "1");
+
+			// firstname elements
+			Element firstname = doc.createElement("firstname");
+			firstname.appendChild(doc.createTextNode("yong"));
+			staff.appendChild(firstname);
+
+			// lastname elements
+			Element lastname = doc.createElement("lastname");
+			lastname.appendChild(doc.createTextNode("mook kim"));
+			staff.appendChild(lastname);
+
+			// nickname elements
+			Element nickname = doc.createElement("nickname");
+			nickname.appendChild(doc.createTextNode("mkyong"));
+			staff.appendChild(nickname);
+
+			// salary elements
+			Element salary = doc.createElement("salary");
+			salary.appendChild(doc.createTextNode("100000"));
+			staff.appendChild(salary);
+
+			// write the content into xml file
+			TransformerFactory transformerFactory = TransformerFactory
+					.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			DOMSource source = new DOMSource(doc);
+
+			StreamResult result = new StreamResult(new File("C:\\testing.xml"));
+			transformer.transform(source, result);
+
+			System.out.println("Done");
+
+		} catch (ParserConfigurationException pce) {
+			pce.printStackTrace();
+		} catch (TransformerException tfe) {
+			tfe.printStackTrace();
+		}
 
 	}
 

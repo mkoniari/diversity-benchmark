@@ -29,18 +29,16 @@ public class Constant {
 	};
 
 	public static enum DISTRIBUTION {
-		NormalDistribution, UniformDistribution, FixedDistribution
-
-	};
-
-	public static enum FEEDBACKSDISTRIBUTION {
-		FeedBacksPerQuestionDistributor, FeedBacksPerWorkerDistributor, FeedBacksConstraintDistributor
+		Normal, Uniform, Fixed, Cosine, Powertail
 
 	};
 
 	public static enum METRIC {
 		ComputationTime, SRecall, NormalizedRelevance
-		// , WorkerEstimationError, SensitiveToSpammers
+	};
+
+	public static enum CENTGEN {
+		Line, Circle
 
 	};
 

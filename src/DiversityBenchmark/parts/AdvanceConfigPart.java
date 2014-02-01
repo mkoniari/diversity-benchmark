@@ -1,5 +1,16 @@
 package DiversityBenchmark.parts;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.core.databinding.Binding;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.core.databinding.beans.BeanProperties;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -8,7 +19,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -24,58 +34,60 @@ import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-import DiversityBenchmark.models.AdvanceConfigModel;
+import DiversityBenchmark.models.AdvanceDatasetParameter;
 import DiversityBenchmark.utils.Constant;
+import DiversityBenchmark.utils.NumericValidator;
 
 public class AdvanceConfigPart extends TitleAreaDialog {
-	private AdvanceConfigModel advanceConfig;
-
-	private Combo expert_combo;
-	private Combo normalWorker_combo;
-	private Combo sloppyWorker_combo;
-
-	private Text txtEM;
-	private Text txtIter;
-	private Text txtSLME;
-
-	private Text expert_fisrtParam;
-	private Text expert_secondParam;
-	private Text normalWorker_fisrtParam;
-	private Text normalWorker_secondParam;
-	private Text sloppyWorker_fisrtParam;
-	private Text sloppyWorker_secondParam;
+	private AdvanceDatasetParameter advanceConfig;
 
 	private FormToolkit toolkit;
 	private Form form;
+	final String[] observerValues = new String[] { "Circle", "Line" };
 
-	private Composite expert_section;
-	private Composite expert_composite;
-	private Composite normalWorker_section;
-	private Composite normalWorker_composite;
-	private Composite sloppyWorker_section;
-	private Composite sloppyWorker_composite;
+	private Section sctnDataset;
+	private Composite datasetComposite;
 
-	final String[] feedbacksDistributor = new String[] {
-			"FeedBacks Per Question Distributor",
-			"FeedBacks Per Worker Distributor",
-			"FeedBacks Constraint Distributor" };
-	final String[] observerValues = new String[] { "Normal Distribution",
-			"Fix Distribution", "Uniform Distribution" };
+	private Section sctnCentGen;
+	private Composite centGenComposite;
 
-	protected int expert_index;
-	protected int normalWorker_index;
-	protected int sloppyWorker_index;
+	private int centgenIndex;
 
-	private Section sctnAlgorithm;
-	private Composite algorithmComposite;
+	private Label lblCosineMin;
 
-	private Section sctnFeedbacks;
-	private Composite feedbacksComposite;
-	private Combo feedbacks_combo;
-	private Text txtFeedbacksRatio;
-	private Text txtFeedbacksRatioQuestion;
+	private Label lblCosineMax;
+	private Text textCosineMax;
+	private Text textCosineMin;
+	private Label lblMean;
+	private Label lblStd;
+	private Label lblNormal;
+	private Text textMeanNormal;
+	private Text textStdNormal;
+	private Label lblShape;
+	private Label lblMax;
+	private Label lblMin;
+	private Label lblPowerTail;
+	private Text textShapeTail;
+	private Text textMaxTail;
+	private Text textMinTail;
+	private Label lblMaxClusterDistance;
+	private Text textMaxClusterDistance;
+	private Label lblMinClusterDistance;
+	private Text textMinClusterDistance;
+	private Label lblMaxRadius;
+	private Text textMaxRadius;
+	private Label lblMinRadius;
+	private Text textMinRadius;
+	private Label lblShape_1;
+	private Label lblDistance;
+	private Text textCentGenDistance;
+	private Combo combo;
+	private ComboViewer comboViewer;
+	private AdvanceDatasetParameter simuPara;
 
-	private int feedbacks_index;
+	private DataBindingContext ctx;
+	private NumericValidator validator = null;
+	Map<Text, String> txtBindding = new HashMap<Text, String>();
 
 	public AdvanceConfigPart(Shell parentShell) {
 		super(parentShell);
@@ -95,6 +107,7 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
+		simuPara = new AdvanceDatasetParameter();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		// layout.horizontalAlignment = GridData.FILL;
@@ -107,12 +120,15 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 		initValue();
 		addParameterFormPart(parent);
 
+		generateSimuParamBinding();
+		validator = new NumericValidator();
+		bindSimuParamValues(validator);
+
 		return parent;
 	}
 
 	private void initValue() {
-		advanceConfig = new AdvanceConfigModel();
-		advanceConfig.readAdvanceConfigFile(Constant.ADVANCE_CONFIG_FILE);
+		advanceConfig = new AdvanceDatasetParameter();
 	}
 
 	private void addParameterFormPart(final Composite parent) {
@@ -129,6 +145,7 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 
 		addClusterSection(parent);
 		addDatasetSection(parent);
+		addCentGenSection(parent);
 	}
 
 	private void addClusterSection(Composite parent) {
@@ -139,540 +156,284 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 		gd_observerSection.widthHint = 360;
 		observerSection.setLayoutData(gd_observerSection);
 		toolkit.paintBordersFor(observerSection);
-		observerSection.setText("Worker");
+		observerSection.setText("Distribution");
 
-		Composite workerHolder = new Composite(observerSection, SWT.NONE);
-		GridLayout gl_workerHolder = new GridLayout(1, true);
-		gl_workerHolder.verticalSpacing = 0;
-		gl_workerHolder.marginBottom = 5;
-		workerHolder.setLayout(gl_workerHolder);
-		observerSection.setClient(workerHolder);
-		toolkit.adapt(workerHolder);
-		toolkit.paintBordersFor(workerHolder);
+		Composite observerSectionBody = new Composite(observerSection, SWT.NONE);
+		observerSection.setClient(observerSectionBody);
+		toolkit.adapt(observerSectionBody);
+		toolkit.paintBordersFor(observerSectionBody);
+		observerSectionBody.setLayout(new GridLayout(4, false));
 
-		expert_section = new Composite(workerHolder, SWT.NONE);
-		expert_section.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				true, 1, 1));
-		GridLayout gl_expert_section = new GridLayout(2, false);
-		gl_expert_section.verticalSpacing = 0;
-		gl_expert_section.marginHeight = 0;
-		expert_section.setLayout(gl_expert_section);
+		new Label(observerSectionBody, SWT.NONE);
 
-		addExpertDistribution();
+		lblCosineMax = new Label(observerSectionBody, SWT.NONE);
+		toolkit.adapt(lblCosineMax, true, true);
+		lblCosineMax.setText("Max");
 
-		normalWorker_section = new Composite(workerHolder, SWT.NONE);
-		normalWorker_section.setLayoutData(new GridData(SWT.FILL, SWT.TOP,
-				false, false, 1, 1));
-		GridLayout gl_normalWorker_section = new GridLayout(2, false);
-		gl_normalWorker_section.verticalSpacing = 0;
-		gl_normalWorker_section.marginHeight = 0;
-		normalWorker_section.setLayout(gl_normalWorker_section);
+		lblCosineMin = new Label(observerSectionBody, SWT.NONE);
+		toolkit.adapt(lblCosineMin, true, true);
+		lblCosineMin.setText("Min");
+		new Label(observerSectionBody, SWT.NONE);
 
-		// new Label(observerSectionBody, SWT.NONE);
-		addNormalWorkerDistribution();
+		Label lblCosine = new Label(observerSectionBody, SWT.NONE);
+		lblCosine.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+				false, 1, 1));
+		toolkit.adapt(lblCosine, true, true);
+		lblCosine.setText("Cosine");
 
-		sloppyWorker_section = new Composite(workerHolder, SWT.NONE);
-		sloppyWorker_section.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
-				false, false, 1, 1));
-		GridLayout gl_sloppyWorker_section = new GridLayout(2, false);
-		gl_sloppyWorker_section.verticalSpacing = 0;
-		gl_sloppyWorker_section.marginHeight = 0;
-		sloppyWorker_section.setLayout(gl_sloppyWorker_section);
+		textCosineMax = new Text(observerSectionBody, SWT.BORDER);
+		textCosineMax.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				false, 1, 1));
+		toolkit.adapt(textCosineMax, true, true);
 
-		// new Label(observerSectionBody, SWT.NONE);
-		addSloppyWorkerDistribution();
+		textCosineMin = new Text(observerSectionBody, SWT.BORDER);
+		textCosineMin.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				false, 1, 1));
+		toolkit.adapt(textCosineMin, true, true);
+		new Label(observerSectionBody, SWT.NONE);
+		new Label(observerSectionBody, SWT.NONE);
 
+		lblMean = new Label(observerSectionBody, SWT.NONE);
+		toolkit.adapt(lblMean, true, true);
+		lblMean.setText("Mean");
+
+		lblStd = new Label(observerSectionBody, SWT.NONE);
+		toolkit.adapt(lblStd, true, true);
+		lblStd.setText("Std");
+		new Label(observerSectionBody, SWT.NONE);
+
+		lblNormal = new Label(observerSectionBody, SWT.NONE);
+		lblNormal.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+				false, 1, 1));
+		toolkit.adapt(lblNormal, true, true);
+		lblNormal.setText("Normal");
+
+		textMeanNormal = new Text(observerSectionBody, SWT.BORDER);
+		textMeanNormal.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				false, 1, 1));
+		toolkit.adapt(textMeanNormal, true, true);
+
+		textStdNormal = new Text(observerSectionBody, SWT.BORDER);
+		textStdNormal.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				false, 1, 1));
+		toolkit.adapt(textStdNormal, true, true);
+		new Label(observerSectionBody, SWT.NONE);
+		new Label(observerSectionBody, SWT.NONE);
+
+		lblShape = new Label(observerSectionBody, SWT.NONE);
+		toolkit.adapt(lblShape, true, true);
+		lblShape.setText("Shape");
+
+		lblMax = new Label(observerSectionBody, SWT.NONE);
+		toolkit.adapt(lblMax, true, true);
+		lblMax.setText("Max");
+
+		lblMin = new Label(observerSectionBody, SWT.NONE);
+		toolkit.adapt(lblMin, true, true);
+		lblMin.setText("Min");
+
+		lblPowerTail = new Label(observerSectionBody, SWT.NONE);
+		lblPowerTail.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+				false, 1, 1));
+		toolkit.adapt(lblPowerTail, true, true);
+		lblPowerTail.setText("Power tail");
+
+		textShapeTail = new Text(observerSectionBody, SWT.BORDER);
+		textShapeTail.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				false, 1, 1));
+		toolkit.adapt(textShapeTail, true, true);
+
+		textMaxTail = new Text(observerSectionBody, SWT.BORDER);
+		textMaxTail.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				false, 1, 1));
+		toolkit.adapt(textMaxTail, true, true);
+
+		textMinTail = new Text(observerSectionBody, SWT.BORDER);
+		textMinTail.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				false, 1, 1));
+		toolkit.adapt(textMinTail, true, true);
 	}
 
 	private int getIndex(Constant.DISTRIBUTION distribution) {
 		switch (distribution) {
-		case NormalDistribution:
+		case Normal:
 			return 0;
-		case UniformDistribution:
-			return 2;
-		case FixedDistribution:
+		case Cosine:
 			return 1;
+		case Powertail:
+			return 2;
 		default:
-			return 3;
-		}
-	}
-
-	private int getIndexofFeedbacksDistributor(
-			Constant.FEEDBACKSDISTRIBUTION distribution) {
-		switch (distribution) {
-		case FeedBacksPerQuestionDistributor:
 			return 0;
-		case FeedBacksPerWorkerDistributor:
-			return 1;
-		default:
-			return 2;
 		}
-	}
-
-	private void addExpertDistribution() {
-		Composite distribution = new Composite(expert_section, SWT.NONE);
-		distribution.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false,
-				true, 1, 1));
-		toolkit.adapt(distribution);
-		toolkit.paintBordersFor(distribution);
-		distribution.setLayout(new GridLayout(1, false));
-
-		Label expert = new Label(distribution, SWT.NONE);
-		expert.setLayoutData(new GridData(SWT.LEFT, SWT.DOWN, true, false, 1, 1));
-		expert.setText("Expert");
-
-		ComboViewer comboViewer = new ComboViewer(distribution, SWT.READ_ONLY);
-		expert_combo = comboViewer.getCombo();
-		expert_combo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true,
-				false, 1, 1));
-		toolkit.paintBordersFor(expert_combo);
-
-		comboViewer.setContentProvider(new ArrayContentProvider()); // org.eclipse.jface.viewers.ArrayContentProvider()
-		comboViewer.setLabelProvider(new LabelProvider()); // org.eclipse.jface.viewers.LabelProvider()
-
-		expert_combo.setItems(observerValues);
-		// combo.setText(observerValues[0]);
-		expert_combo.setVisibleItemCount(observerValues.length);
-		expert_index = getIndex(Constant.DISTRIBUTION.valueOf(advanceConfig
-				.getWorkers().getExpert().getSelectedDistribution()));
-		expert_combo.select(expert_index);
-		addExpertParameters();
-		expert_combo.addListener(SWT.Modify, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				expert_index = expert_combo.getSelectionIndex();
-				System.out.println(expert_combo.getItem(expert_index));
-				if (expert_composite != null)
-					expert_composite.dispose();
-				addExpertParameters();
-			}
-		});
-	}
-
-	private void addExpertParameters() {
-		expert_composite = new Composite(expert_section, SWT.NONE);
-		expert_composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				false, 1, 1));
-		toolkit.adapt(expert_composite);
-		toolkit.paintBordersFor(expert_composite);
-		expert_composite.setLayout(new GridLayout(2, true));
-
-		Label firstParams = new Label(expert_composite, SWT.NONE);
-		firstParams.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, false,
-				1, 1));
-		toolkit.adapt(firstParams, true, true);
-		// firstParams.setText("mean");
-
-		Label secondParam = new Label(expert_composite, SWT.NONE);
-		secondParam.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, false,
-				1, 1));
-		toolkit.adapt(secondParam, true, true);
-		// secondParam.setText("sd");
-
-		expert_fisrtParam = new Text(expert_composite, SWT.BORDER);
-		expert_fisrtParam.setSize(new Point(3000, 0));
-		GridData gd_expert_fisrtParam = new GridData(SWT.LEFT, SWT.CENTER,
-				false, true, 1, 1);
-		gd_expert_fisrtParam.widthHint = 60;
-		expert_fisrtParam.setLayoutData(gd_expert_fisrtParam);
-
-		expert_secondParam = new Text(expert_composite, SWT.BORDER);
-		expert_secondParam.setSize(new Point(500, 0));
-		GridData gd_expert_secondParam = new GridData(SWT.LEFT, SWT.CENTER,
-				false, true, 1, 1);
-		gd_expert_secondParam.widthHint = 60;
-		expert_secondParam.setLayoutData(gd_expert_secondParam);
-		expert_secondParam.setVisible(true);
-
-		int index = expert_combo.getSelectionIndex();
-		switch (index) {
-		case 0:
-			firstParams.setText("Mean");
-			secondParam.setText("Sd");
-			expert_fisrtParam.setText(advanceConfig.getWorkers().getExpert()
-					.getMean());
-			expert_secondParam.setText(advanceConfig.getWorkers().getExpert()
-					.getSd());
-			break;
-		case 1:
-			firstParams.setText("Reliability");
-			secondParam.setText("");
-			expert_fisrtParam.setText(advanceConfig.getWorkers().getExpert()
-					.getFixed());
-			expert_secondParam.setVisible(false);
-			break;
-		case 2:
-			firstParams.setText("Lower Bound");
-			secondParam.setText("Upper Bound");
-			expert_fisrtParam.setText(advanceConfig.getWorkers().getExpert()
-					.getLowBound());
-			expert_secondParam.setText(advanceConfig.getWorkers().getExpert()
-					.getUpBound());
-			break;
-
-		default:
-			break;
-		}
-		expert_section.layout();
-	}
-
-	private void addNormalWorkerDistribution() {
-		Composite distribution = new Composite(normalWorker_section, SWT.NONE);
-		toolkit.adapt(distribution);
-		toolkit.paintBordersFor(distribution);
-		distribution.setLayout(new GridLayout(1, false));
-
-		Label normalWorker = new Label(distribution, SWT.NONE);
-		normalWorker.setLayoutData(new GridData(SWT.LEFT, SWT.DOWN, false,
-				false, 1, 1));
-		normalWorker.setText("Normal Worker");
-
-		ComboViewer comboViewer = new ComboViewer(distribution, SWT.READ_ONLY);
-		normalWorker_combo = comboViewer.getCombo();
-		normalWorker_combo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER,
-				true, false, 1, 1));
-		toolkit.paintBordersFor(normalWorker_combo);
-
-		comboViewer.setContentProvider(new ArrayContentProvider()); // org.eclipse.jface.viewers.ArrayContentProvider()
-		comboViewer.setLabelProvider(new LabelProvider()); // org.eclipse.jface.viewers.LabelProvider()
-
-		normalWorker_combo.setItems(observerValues);
-		// combo.setText(observerValues[0]);
-		normalWorker_combo.setVisibleItemCount(observerValues.length);
-		normalWorker_index = getIndex(Constant.DISTRIBUTION
-				.valueOf(advanceConfig.getWorkers().getNormal()
-						.getSelectedDistribution()));
-		normalWorker_combo.select(normalWorker_index);
-		addNormalWorkerParameters();
-		normalWorker_combo.addListener(SWT.Modify, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				normalWorker_index = normalWorker_combo.getSelectionIndex();
-				System.out.println(normalWorker_combo
-						.getItem(normalWorker_index));
-				if (normalWorker_composite != null)
-					normalWorker_composite.dispose();
-				addNormalWorkerParameters();
-			}
-		});
-	}
-
-	private void addNormalWorkerParameters() {
-		normalWorker_composite = new Composite(normalWorker_section, SWT.NONE);
-		normalWorker_composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-				true, false, 1, 1));
-		toolkit.adapt(normalWorker_composite);
-		toolkit.paintBordersFor(normalWorker_composite);
-		normalWorker_composite.setLayout(new GridLayout(2, true));
-
-		Label firstParams = new Label(normalWorker_composite, SWT.NONE);
-		firstParams.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true,
-				false, 1, 1));
-		toolkit.adapt(firstParams, true, true);
-		// firstParams.setText("mean");
-
-		Label secondParam = new Label(normalWorker_composite, SWT.NONE);
-		secondParam.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true,
-				false, 1, 1));
-		toolkit.adapt(secondParam, true, true);
-		// secondParam.setText("sd");
-
-		normalWorker_fisrtParam = new Text(normalWorker_composite, SWT.BORDER);
-		GridData gd_normalWorker_fisrtParam = new GridData(SWT.LEFT,
-				SWT.CENTER, false, false, 1, 1);
-		gd_normalWorker_fisrtParam.widthHint = 60;
-		normalWorker_fisrtParam.setLayoutData(gd_normalWorker_fisrtParam);
-
-		normalWorker_secondParam = new Text(normalWorker_composite, SWT.BORDER);
-		GridData gd_normalWorker_secondParam = new GridData(SWT.LEFT,
-				SWT.CENTER, false, false, 1, 1);
-		gd_normalWorker_secondParam.widthHint = 60;
-		normalWorker_secondParam.setLayoutData(gd_normalWorker_secondParam);
-		normalWorker_secondParam.setVisible(true);
-
-		int index = normalWorker_combo.getSelectionIndex();
-		switch (index) {
-		case 0:
-			firstParams.setText("Mean");
-			secondParam.setText("Sd");
-			normalWorker_fisrtParam.setText(advanceConfig.getWorkers()
-					.getNormal().getMean());
-			normalWorker_secondParam.setText(advanceConfig.getWorkers()
-					.getNormal().getSd());
-			break;
-		case 1:
-			firstParams.setText("Reliability");
-			secondParam.setText("");
-			normalWorker_fisrtParam.setText(advanceConfig.getWorkers()
-					.getNormal().getFixed());
-			normalWorker_secondParam.setVisible(false);
-			break;
-		case 2:
-			firstParams.setText("Lower Bound");
-			secondParam.setText("Upper Bound");
-			normalWorker_fisrtParam.setText(advanceConfig.getWorkers()
-					.getNormal().getLowBound());
-			normalWorker_secondParam.setText(advanceConfig.getWorkers()
-					.getNormal().getUpBound());
-			break;
-
-		default:
-			break;
-		}
-		normalWorker_section.layout();
-	}
-
-	private void addSloppyWorkerDistribution() {
-		Composite distribution = new Composite(sloppyWorker_section, SWT.NONE);
-		toolkit.adapt(distribution);
-		toolkit.paintBordersFor(distribution);
-		distribution.setLayout(new GridLayout(1, false));
-
-		Label sloppyWorker = new Label(distribution, SWT.NONE);
-		sloppyWorker.setLayoutData(new GridData(SWT.LEFT, SWT.DOWN, false,
-				false, 1, 1));
-		sloppyWorker.setText("Sloppy Worker");
-
-		ComboViewer comboViewer = new ComboViewer(distribution, SWT.READ_ONLY);
-		sloppyWorker_combo = comboViewer.getCombo();
-		sloppyWorker_combo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER,
-				true, false, 1, 1));
-		toolkit.paintBordersFor(sloppyWorker_combo);
-
-		comboViewer.setContentProvider(new ArrayContentProvider()); // org.eclipse.jface.viewers.ArrayContentProvider()
-		comboViewer.setLabelProvider(new LabelProvider()); // org.eclipse.jface.viewers.LabelProvider()
-
-		sloppyWorker_combo.setItems(observerValues);
-		// combo.setText(observerValues[0]);
-		sloppyWorker_combo.setVisibleItemCount(observerValues.length);
-		sloppyWorker_index = getIndex(Constant.DISTRIBUTION
-				.valueOf(advanceConfig.getWorkers().getSloppy()
-						.getSelectedDistribution()));
-		sloppyWorker_combo.select(sloppyWorker_index);
-		addSloppyWorkerParameters();
-		sloppyWorker_combo.addListener(SWT.Modify, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				sloppyWorker_index = sloppyWorker_combo.getSelectionIndex();
-				System.out.println(sloppyWorker_combo
-						.getItem(sloppyWorker_index));
-				if (sloppyWorker_composite != null)
-					sloppyWorker_composite.dispose();
-				addSloppyWorkerParameters();
-			}
-		});
-	}
-
-	private void addSloppyWorkerParameters() {
-		sloppyWorker_composite = new Composite(sloppyWorker_section, SWT.NONE);
-		sloppyWorker_composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-				true, false, 1, 1));
-		toolkit.adapt(sloppyWorker_composite);
-		toolkit.paintBordersFor(sloppyWorker_composite);
-		sloppyWorker_composite.setLayout(new GridLayout(2, true));
-
-		Label firstParams = new Label(sloppyWorker_composite, SWT.NONE);
-		firstParams.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true,
-				false, 1, 1));
-		toolkit.adapt(firstParams, true, true);
-		// firstParams.setText("mean");
-
-		Label secondParam = new Label(sloppyWorker_composite, SWT.NONE);
-		secondParam.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true,
-				false, 1, 1));
-		toolkit.adapt(secondParam, true, true);
-		// secondParam.setText("sd");
-
-		sloppyWorker_fisrtParam = new Text(sloppyWorker_composite, SWT.BORDER);
-		GridData gd_sloppyWorker_fisrtParam = new GridData(SWT.LEFT,
-				SWT.CENTER, false, false, 1, 1);
-		gd_sloppyWorker_fisrtParam.widthHint = 60;
-		sloppyWorker_fisrtParam.setLayoutData(gd_sloppyWorker_fisrtParam);
-
-		sloppyWorker_secondParam = new Text(sloppyWorker_composite, SWT.BORDER);
-		GridData gd_sloppyWorker_secondParam = new GridData(SWT.LEFT,
-				SWT.CENTER, false, false, 1, 1);
-		gd_sloppyWorker_secondParam.widthHint = 60;
-		sloppyWorker_secondParam.setLayoutData(gd_sloppyWorker_secondParam);
-		sloppyWorker_secondParam.setVisible(true);
-
-		int index = sloppyWorker_combo.getSelectionIndex();
-		switch (index) {
-		case 0:
-			firstParams.setText("Mean");
-			secondParam.setText("Sd");
-			sloppyWorker_fisrtParam.setText(advanceConfig.getWorkers()
-					.getSloppy().getMean());
-			sloppyWorker_secondParam.setText(advanceConfig.getWorkers()
-					.getSloppy().getSd());
-			break;
-		case 1:
-			firstParams.setText("Reliability");
-			secondParam.setText("");
-			sloppyWorker_fisrtParam.setText(advanceConfig.getWorkers()
-					.getSloppy().getFixed());
-			sloppyWorker_secondParam.setVisible(false);
-			break;
-		case 2:
-			firstParams.setText("Lower Bound");
-			secondParam.setText("Upper Bound");
-			sloppyWorker_fisrtParam.setText(advanceConfig.getWorkers()
-					.getSloppy().getLowBound());
-			sloppyWorker_secondParam.setText(advanceConfig.getWorkers()
-					.getSloppy().getUpBound());
-			break;
-
-		default:
-			break;
-		}
-		sloppyWorker_section.layout();
 	}
 
 	private void addDatasetSection(Composite parent) {
-		sctnAlgorithm = toolkit.createSection(form.getBody(),
+		sctnDataset = toolkit.createSection(form.getBody(),
 				Section.CLIENT_INDENT | Section.TITLE_BAR);
 		// gd_workerSection.widthHint = 335;
-		sctnAlgorithm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				true, 1, 2));
+		sctnDataset.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
+				1, 2));
 
-		sctnAlgorithm.setText("Algorithm");
+		sctnDataset.setText("Dataset");
 
-		algorithmComposite = new Composite(sctnAlgorithm, SWT.NONE);
-		toolkit.adapt(algorithmComposite);
-		toolkit.paintBordersFor(algorithmComposite);
-		sctnAlgorithm.setClient(algorithmComposite);
-		createAlgorithmForm(algorithmComposite);
+		datasetComposite = new Composite(sctnDataset, SWT.NONE);
+		toolkit.adapt(datasetComposite);
+		toolkit.paintBordersFor(datasetComposite);
+		sctnDataset.setClient(datasetComposite);
+		GridLayout gl_datasetComposite = new GridLayout(2, false);
+		gl_datasetComposite.horizontalSpacing = 2;
+		datasetComposite.setLayout(gl_datasetComposite);
+
+		lblMaxClusterDistance = new Label(datasetComposite, SWT.NONE);
+		toolkit.adapt(lblMaxClusterDistance, true, true);
+		lblMaxClusterDistance.setText("Max cluster distance");
+
+		textMaxClusterDistance = new Text(datasetComposite, SWT.BORDER);
+		textMaxClusterDistance.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
+				true, false, 1, 1));
+		toolkit.adapt(textMaxClusterDistance, true, true);
+
+		lblMinClusterDistance = new Label(datasetComposite, SWT.NONE);
+		toolkit.adapt(lblMinClusterDistance, true, true);
+		lblMinClusterDistance.setText("Min cluster distance");
+
+		textMinClusterDistance = new Text(datasetComposite, SWT.BORDER);
+		textMinClusterDistance.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
+				true, false, 1, 1));
+		toolkit.adapt(textMinClusterDistance, true, true);
+
+		lblMaxRadius = new Label(datasetComposite, SWT.NONE);
+		toolkit.adapt(lblMaxRadius, true, true);
+		lblMaxRadius.setText("Max radius");
+
+		textMaxRadius = new Text(datasetComposite, SWT.BORDER);
+		textMaxRadius.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				false, 1, 1));
+		toolkit.adapt(textMaxRadius, true, true);
+
+		lblMinRadius = new Label(datasetComposite, SWT.NONE);
+		toolkit.adapt(lblMinRadius, true, true);
+		lblMinRadius.setText("Min radius");
+
+		textMinRadius = new Text(datasetComposite, SWT.BORDER);
+		textMinRadius.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				false, 1, 1));
+		toolkit.adapt(textMinRadius, true, true);
 
 	}
 
-	public void createAlgorithmForm(Composite parent) {
-		GridLayout gl_algorithmComposite = new GridLayout(2, false);
-		gl_algorithmComposite.verticalSpacing = 10;
-		gl_algorithmComposite.marginHeight = 6;
-		gl_algorithmComposite.marginTop = 3;
-		parent.setLayout(gl_algorithmComposite);
-
-		Label EM = new Label(parent, SWT.NONE);
-		GridData gd_EM = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_EM.verticalIndent = -2;
-		EM.setLayoutData(gd_EM);
-		EM.setText("EM Iteration");
-
-		txtEM = new Text(parent, SWT.BORDER);
-		GridData gd_txtEM = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1,
-				1);
-		gd_txtEM.verticalIndent = 2;
-		gd_txtEM.widthHint = 60;
-		txtEM.setLayoutData(gd_txtEM);
-		txtEM.setText(advanceConfig.getAlgos().getEM_iter());
-
-		Label Iter = new Label(parent, SWT.NONE);
-		Iter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1,
-				1));
-		Iter.setText("ITER Iteration");
-
-		txtIter = new Text(parent, SWT.BORDER);
-		GridData gd_txtIter = new GridData(SWT.LEFT, SWT.CENTER, true, false,
-				1, 1);
-		gd_txtIter.widthHint = 60;
-		txtIter.setLayoutData(gd_txtIter);
-		txtIter.setText(advanceConfig.getAlgos().getITER_iter());
-
-		Label SLME = new Label(parent, SWT.NONE);
-		GridData gd_SLME = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1,
-				1);
-		gd_SLME.verticalIndent = 1;
-		SLME.setLayoutData(gd_SLME);
-		SLME.setText("SLME Iteration");
-
-		txtSLME = new Text(parent, SWT.BORDER);
-		GridData gd_txtSLME = new GridData(SWT.LEFT, SWT.CENTER, true, false,
-				1, 1);
-		gd_txtSLME.widthHint = 60;
-		txtSLME.setLayoutData(gd_txtSLME);
-		txtSLME.setText(advanceConfig.getAlgos().getSLME_iter());
-	}
-
-	private void addFeedbacksSection(Composite parent) {
-		sctnFeedbacks = toolkit.createSection(form.getBody(),
+	private void addCentGenSection(Composite parent) {
+		sctnCentGen = toolkit.createSection(form.getBody(),
 				Section.CLIENT_INDENT | Section.TITLE_BAR);
 		// gd_workerSection.widthHint = 335;
-		sctnFeedbacks.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				true, 2, 1));
+		GridData gd_sctnCentGen = new GridData(SWT.FILL, SWT.FILL, true, true,
+				1, 1);
+		gd_sctnCentGen.widthHint = 293;
+		sctnCentGen.setLayoutData(gd_sctnCentGen);
 
-		sctnFeedbacks.setText("Feedbacks");
+		sctnCentGen.setText("Cluster Generator");
 
-		feedbacksComposite = new Composite(sctnFeedbacks, SWT.NONE);
-		toolkit.adapt(feedbacksComposite);
-		toolkit.paintBordersFor(feedbacksComposite);
-		sctnFeedbacks.setClient(feedbacksComposite);
-		createFeedbacksForm();
+		centGenComposite = new Composite(sctnCentGen, SWT.NONE);
+		toolkit.adapt(centGenComposite);
+		toolkit.paintBordersFor(centGenComposite);
+		sctnCentGen.setClient(centGenComposite);
+		GridLayout gl_centGenComposite = new GridLayout(3, false);
+		gl_centGenComposite.horizontalSpacing = 3;
+		centGenComposite.setLayout(gl_centGenComposite);
+		new Label(centGenComposite, SWT.NONE);
+
+		lblShape_1 = new Label(centGenComposite, SWT.NONE);
+		toolkit.adapt(lblShape_1, true, true);
+		lblShape_1.setText("Shape");
+
+		lblDistance = new Label(centGenComposite, SWT.NONE);
+		toolkit.adapt(lblDistance, true, true);
+		lblDistance.setText("Distance");
+		new Label(centGenComposite, SWT.NONE);
+
+		comboViewer = new ComboViewer(centGenComposite, SWT.READ_ONLY);
+		combo = comboViewer.getCombo();
+		toolkit.paintBordersFor(combo);
+
+		comboViewer.setContentProvider(new ArrayContentProvider()); // org.eclipse.jface.viewers.ArrayContentProvider()
+		comboViewer.setLabelProvider(new LabelProvider()); // org.eclipse.jface.viewers.LabelProvider()
+
+		combo.setItems(observerValues);
+		combo.setText(observerValues[0]);
+		combo.setVisibleItemCount(observerValues.length);
+		combo.addListener(SWT.Modify, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				centgenIndex = combo.getSelectionIndex();
+				// System.out.println(filterByText[index]);
+
+			}
+		});
+
+		textCentGenDistance = new Text(centGenComposite, SWT.BORDER);
+		textCentGenDistance.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
+				true, false, 1, 1));
+		toolkit.adapt(textCentGenDistance, true, true);
+		new Label(form.getBody(), SWT.NONE);
+
+	}
+
+	private void bindSimuParamValues(IValidator validator) {
+		if (ctx != null) {
+			ctx.dispose();
+		}
+		ctx = new DataBindingContext();
+
+		if (simuPara.getCentgenIndex() != null) {
+			int index = simuPara.getCentgenIndex();
+			combo.select(index);
+		}
+
+		for (Text key : txtBindding.keySet()) {
+			IObservableValue widgetValue = WidgetProperties.text(SWT.Modify)
+					.observe(key);
+			IObservableValue modelValue = BeanProperties.value(
+					AdvanceDatasetParameter.class, txtBindding.get(key))
+					.observe(simuPara);
+			if (validator == null) {
+				ctx.bindValue(widgetValue, modelValue);
+			} else {
+				UpdateValueStrategy strategy = new UpdateValueStrategy();
+				strategy.setAfterGetValidator(validator);
+				// strategy.setBeforeSetValidator(validator);
+				// strategy.setAfterConvertValidator(validator);
+				// strategy.setConverter(new Converter(String.class,
+				// Integer.class) {
+				//
+				// @Override
+				// public Object convert(Object o) {
+				// if (o == null) {
+				// return 0;
+				// }
+				// if (o instanceof String) {
+				// System.out.println("Convert");
+				// String str = (String) o;
+				// if (str.trim().isEmpty()) {
+				// return 0;
+				// }
+				// return Integer.valueOf(str);
+				// }
+				// return o;
+				// }
+				//
+				// });
+				Binding bindValue = ctx.bindValue(widgetValue, modelValue,
+						strategy, null);
+				// Add some decorations
+				ControlDecorationSupport.create(bindValue, SWT.TOP | SWT.RIGHT);
+
+			}
+		}
 
 	}
 
 	public void createFeedbacksForm() {
-		GridLayout gl_feedbacksComposite = new GridLayout(2, false);
-		gl_feedbacksComposite.marginLeft = 5;
-		gl_feedbacksComposite.horizontalSpacing = 0;
-		feedbacksComposite.setLayout(gl_feedbacksComposite);
-
-		Label distributor = new Label(feedbacksComposite, SWT.NONE);
-		GridData gd_distributor = new GridData(SWT.LEFT, SWT.DOWN, true, false,
-				1, 1);
-		gd_distributor.horizontalIndent = 5;
-		distributor.setLayoutData(gd_distributor);
-		distributor.setText("Distributor");
-
-		ComboViewer comboViewer = new ComboViewer(feedbacksComposite,
-				SWT.READ_ONLY);
-		feedbacks_combo = comboViewer.getCombo();
-		GridData gd_feedbacks_combo = new GridData(SWT.LEFT, SWT.CENTER, true,
-				false, 1, 1);
-		gd_feedbacks_combo.widthHint = 286;
-		gd_feedbacks_combo.heightHint = 88;
-		feedbacks_combo.setLayoutData(gd_feedbacks_combo);
-		toolkit.paintBordersFor(feedbacks_combo);
-
-		comboViewer.setContentProvider(new ArrayContentProvider()); // org.eclipse.jface.viewers.ArrayContentProvider()
-		comboViewer.setLabelProvider(new LabelProvider()); // org.eclipse.jface.viewers.LabelProvider()
-
-		feedbacks_combo.setItems(feedbacksDistributor);
-		// combo.setText(observerValues[0]);
-		feedbacks_combo.setVisibleItemCount(feedbacksDistributor.length);
-		// feedbacks_index =
-		// getIndexofFeedbacksDistributor(Constant.FEEDBACKSDISTRIBUTION
-		// .valueOf(advanceConfig.getFeedbacks().getFeedbacksDistributor()));
-		// feedbacks_combo.select(feedbacks_index);
-
-		Label feedbackRatio = new Label(feedbacksComposite, SWT.NONE);
-		GridData gd_feedbackRatio = new GridData(SWT.LEFT, SWT.CENTER, true,
-				false, 1, 1);
-		gd_feedbackRatio.horizontalIndent = 5;
-		feedbackRatio.setLayoutData(gd_feedbackRatio);
-		feedbackRatio.setText("Feedbacks Ratio");
-
-		txtFeedbacksRatio = new Text(feedbacksComposite, SWT.BORDER);
-		GridData gd_txtFeedbacksRatio = new GridData(SWT.LEFT, SWT.CENTER,
-				false, false, 1, 1);
-		gd_txtFeedbacksRatio.widthHint = 60;
-		txtFeedbacksRatio.setLayoutData(gd_txtFeedbacksRatio);
-		// txtFeedbacksRatio.setText(advanceConfig.getFeedbacks()
-		// .getFeedbackRatio());
-
-		Label feedbackRatioQuestion = new Label(feedbacksComposite, SWT.NONE);
-		GridData gd_feedbackRatioQuestion = new GridData(SWT.LEFT, SWT.CENTER,
-				true, false, 1, 1);
-		gd_feedbackRatioQuestion.horizontalIndent = 5;
-		feedbackRatioQuestion.setLayoutData(gd_feedbackRatioQuestion);
-		feedbackRatioQuestion.setText("Feedbacks Ratio Question");
-
-		txtFeedbacksRatioQuestion = new Text(feedbacksComposite, SWT.BORDER);
-		GridData gd_txtFeedbacksRatioQuestion = new GridData(SWT.LEFT,
-				SWT.CENTER, false, false, 1, 1);
-		gd_txtFeedbacksRatioQuestion.widthHint = 60;
-		txtFeedbacksRatioQuestion.setLayoutData(gd_txtFeedbacksRatioQuestion);
-		txtFeedbacksRatioQuestion.setText(advanceConfig.getFeedbacks()
-				.getFeedbackRatioQuestion());
 	}
 
 	@Override
@@ -740,106 +501,29 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 	// Coyy textFields because the UI gets disposed
 	// and the Text Fields are not accessible any more.
 	private void saveInput() {
-		saveWorker();
-		saveAlgos();
-		advanceConfig.writeAdvanceConfigFile(Constant.ADVANCE_CONFIG_FILE);
-	}
-
-	private void saveWorker() {
-		// int expert_index = expert_combo.getSelectionIndex();
-		// switch (expert_index) {
-		// case 0:
-		// advanceConfig.getWorkers().getExpert()
-		// .setSelectedDistribution("NormalDistribution");
-		// advanceConfig.getWorkers().getExpert()
-		// .setMean(expert_fisrtParam.getText());
-		// advanceConfig.getWorkers().getExpert()
-		// .setSd(expert_secondParam.getText());
-		// break;
-		// case 1:
-		// advanceConfig.getWorkers().getExpert()
-		// .setSelectedDistribution("FixedDistribution");
-		// advanceConfig.getWorkers().getExpert()
-		// .setFixed(expert_fisrtParam.getText());
-		// break;
-		// case 2:
-		// advanceConfig.getWorkers().getExpert()
-		// .setSelectedDistribution("UniformDistribution");
-		// advanceConfig.getWorkers().getExpert()
-		// .setLowBound(expert_fisrtParam.getText());
-		// advanceConfig.getWorkers().getExpert()
-		// .setUpBound(expert_secondParam.getText());
-		// break;
-		// default:
-		// break;
-		// }
-		// int normalWorker_index = normalWorker_combo.getSelectionIndex();
-		// switch (normalWorker_index) {
-		// case 0:
-		// advanceConfig.getWorkers().getNormal()
-		// .setSelectedDistribution("NormalDistribution");
-		// advanceConfig.getWorkers().getNormal()
-		// .setMean(normalWorker_fisrtParam.getText());
-		// advanceConfig.getWorkers().getNormal()
-		// .setSd(normalWorker_secondParam.getText());
-		// break;
-		// case 1:
-		// advanceConfig.getWorkers().getNormal()
-		// .setSelectedDistribution("FixedDistribution");
-		// advanceConfig.getWorkers().getNormal()
-		// .setFixed(normalWorker_fisrtParam.getText());
-		// break;
-		// case 2:
-		// advanceConfig.getWorkers().getNormal()
-		// .setSelectedDistribution("UniformDistribution");
-		// advanceConfig.getWorkers().getNormal()
-		// .setLowBound(normalWorker_fisrtParam.getText());
-		// advanceConfig.getWorkers().getNormal()
-		// .setUpBound(normalWorker_secondParam.getText());
-		// break;
-		// default:
-		// break;
-		// }
-		// int sloppyWorker_index = sloppyWorker_combo.getSelectionIndex();
-		// switch (sloppyWorker_index) {
-		// case 0:
-		// advanceConfig.getWorkers().getSloppy()
-		// .setSelectedDistribution("NormalDistribution");
-		// advanceConfig.getWorkers().getSloppy()
-		// .setMean(sloppyWorker_fisrtParam.getText());
-		// advanceConfig.getWorkers().getSloppy()
-		// .setSd(sloppyWorker_secondParam.getText());
-		// break;
-		// case 1:
-		// advanceConfig.getWorkers().getSloppy()
-		// .setSelectedDistribution("FixedDistribution");
-		// advanceConfig.getWorkers().getSloppy()
-		// .setFixed(sloppyWorker_fisrtParam.getText());
-		// break;
-		// case 2:
-		// advanceConfig.getWorkers().getSloppy()
-		// .setSelectedDistribution("UniformDistribution");
-		// advanceConfig.getWorkers().getSloppy()
-		// .setLowBound(sloppyWorker_fisrtParam.getText());
-		// advanceConfig.getWorkers().getSloppy()
-		// .setUpBound(sloppyWorker_secondParam.getText());
-		// break;
-		// default:
-		// break;
-		// }
-		// advanceConfig.getWorkers().updatehashMap();
-	}
-
-	private void saveAlgos() {
-		// advanceConfig.getAlgos().setEM_iter(txtEM.getText());
-		// advanceConfig.getAlgos().setITER_iter(txtIter.getText());
-		// advanceConfig.getAlgos().setSLME_iter(txtSLME.getText());
-		// advanceConfig.getAlgos().updateHashMap();
+		// saveWorker();
+		// saveAlgos();
+		// advanceConfig.writeAdvanceConfigFile(Constant.ADVANCE_CONFIG_FILE);
 	}
 
 	@Override
 	protected void okPressed() {
 		saveInput();
 		super.okPressed();
+	}
+
+	private void generateSimuParamBinding() {
+		txtBindding.put(textCentGenDistance, "centgenDistance");
+		txtBindding.put(textCosineMax, "maxCosine");
+		txtBindding.put(textCosineMin, "minCosine");
+		txtBindding.put(textMaxClusterDistance, "maxClusterDistance");
+		txtBindding.put(textMinClusterDistance, "minClusterDistance");
+		txtBindding.put(textMaxRadius, "maxRadius");
+		txtBindding.put(textMinRadius, "minRadius");
+		txtBindding.put(textMeanNormal, "meanNormal");
+		txtBindding.put(textStdNormal, "stdNormal");
+		txtBindding.put(textShapeTail, "shapeTail");
+		txtBindding.put(textMaxTail, "maxTail");
+		txtBindding.put(textMinTail, "minTail");
 	}
 }

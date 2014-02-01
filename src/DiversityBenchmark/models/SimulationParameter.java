@@ -7,6 +7,7 @@ public class SimulationParameter extends AbstractModel {
 
 	private Integer numOfClusters;
 	private Integer sizeOfClusters;
+	private Integer dimensionality;
 	private Double agWeight;
 	private Double grassHopperDamping;
 	private Double motleyTheta;
@@ -33,6 +34,7 @@ public class SimulationParameter extends AbstractModel {
 		this.swapUpperBound = new Double(0.001);
 		this.msdLambda = new Double(0.4);
 		this.mmrLambda = new Double(0.4);
+		this.dimensionality = new Integer(2);
 	}
 
 	private void initMap() {
@@ -182,6 +184,15 @@ public class SimulationParameter extends AbstractModel {
 
 	public void setIndex(Integer index) {
 		this.index = index;
+	}
+
+	public Integer getDimensionality() {
+		return dimensionality;
+	}
+
+	public void setDimensionality(Integer dimensionality) {
+		propertyChangeSupport.firePropertyChange("dimensionality",
+				this.dimensionality, this.dimensionality = dimensionality);
 	}
 
 }
