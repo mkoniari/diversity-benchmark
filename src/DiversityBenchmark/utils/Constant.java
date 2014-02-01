@@ -20,6 +20,7 @@ public class Constant {
 	public static final String EXISTINGPART = "existingPart";
 	public static final String NEWPART = "newPart";
 	public static final String OBSERVER = "observer";
+	public static final String ADVANCED_PARA = "advancedPara";
 
 	public static final String SELECTALL = "Select All";
 
@@ -29,7 +30,7 @@ public class Constant {
 	};
 
 	public static enum DISTRIBUTION {
-		Normal, Uniform, Fixed, Cosine, Powertail
+		Normal, Cosine, Powertail
 
 	};
 

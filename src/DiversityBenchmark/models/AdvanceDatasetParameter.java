@@ -13,8 +13,8 @@ public class AdvanceDatasetParameter extends AbstractModel {
 	private Double shapeTail;
 	private Double maxTail;
 	private Double minTail;
-	private Integer centgenIndex;
 	private Double centgenDistance;
+	private String centgenName;
 
 	public AdvanceDatasetParameter() {
 		// TODO init default value
@@ -134,13 +134,12 @@ public class AdvanceDatasetParameter extends AbstractModel {
 				this.minTail = minTail);
 	}
 
-	public Integer getCentgenIndex() {
-		return centgenIndex;
+	public String getCentgenName() {
+		return centgenName;
 	}
 
-	public void setCentgenIndex(Integer centgenIndex) {
-		propertyChangeSupport.firePropertyChange("centgenIndex",
-				this.centgenIndex, this.centgenIndex = centgenIndex);
+	public void setCentgenName(String centgenName) {
+		this.centgenName = centgenName;
 	}
 
 	public Double getCentgenDistance() {
@@ -151,5 +150,4 @@ public class AdvanceDatasetParameter extends AbstractModel {
 		propertyChangeSupport.firePropertyChange("centgenDistance",
 				this.centgenDistance, this.centgenDistance = centgenDistance);
 	}
-
 }

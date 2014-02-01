@@ -3,12 +3,15 @@ package DiversityBenchmark.parts;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -36,6 +39,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 import DiversityBenchmark.models.AdvanceDatasetParameter;
 import DiversityBenchmark.utils.Constant;
+import DiversityBenchmark.utils.ContextUtil;
 import DiversityBenchmark.utils.NumericValidator;
 
 public class AdvanceConfigPart extends TitleAreaDialog {
@@ -50,8 +54,6 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 
 	private Section sctnCentGen;
 	private Composite centGenComposite;
-
-	private int centgenIndex;
 
 	private Label lblCosineMin;
 
@@ -88,6 +90,9 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 	private DataBindingContext ctx;
 	private NumericValidator validator = null;
 	Map<Text, String> txtBindding = new HashMap<Text, String>();
+
+	@Inject
+	IEclipseContext context;
 
 	public AdvanceConfigPart(Shell parentShell) {
 		super(parentShell);
@@ -254,19 +259,6 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 		toolkit.adapt(textMinTail, true, true);
 	}
 
-	private int getIndex(Constant.DISTRIBUTION distribution) {
-		switch (distribution) {
-		case Normal:
-			return 0;
-		case Cosine:
-			return 1;
-		case Powertail:
-			return 2;
-		default:
-			return 0;
-		}
-	}
-
 	private void addDatasetSection(Composite parent) {
 		sctnDataset = toolkit.createSection(form.getBody(),
 				Section.CLIENT_INDENT | Section.TITLE_BAR);
@@ -365,7 +357,7 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 
 			@Override
 			public void handleEvent(Event event) {
-				centgenIndex = combo.getSelectionIndex();
+				advanceConfig.setCentgenName(combo.getText());
 				// System.out.println(filterByText[index]);
 
 			}
@@ -385,9 +377,12 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 		}
 		ctx = new DataBindingContext();
 
-		if (simuPara.getCentgenIndex() != null) {
-			int index = simuPara.getCentgenIndex();
-			combo.select(index);
+		if (simuPara.getCentgenName() != null) {
+			// int index = simuPara.getCentgenIndex();
+			// combo.select(index);
+			combo.setText(simuPara.getCentgenName());
+		} else {
+			simuPara.setCentgenName(combo.getText());
 		}
 
 		for (Text key : txtBindding.keySet()) {
@@ -504,6 +499,8 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 		// saveWorker();
 		// saveAlgos();
 		// advanceConfig.writeAdvanceConfigFile(Constant.ADVANCE_CONFIG_FILE);
+		ContextUtil.updateContext(context, Constant.ADVANCED_PARA,
+				advanceConfig);
 	}
 
 	@Override

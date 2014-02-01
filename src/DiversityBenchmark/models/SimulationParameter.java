@@ -15,6 +15,7 @@ public class SimulationParameter extends AbstractModel {
 	private Double msdLambda;
 	private Double mmrLambda;
 	private Integer index;
+	private String distribution;
 	private Double minObserverValue;
 	private Double maxObserverValue;
 	private Double stepObserverValue;
@@ -193,6 +194,14 @@ public class SimulationParameter extends AbstractModel {
 	public void setDimensionality(Integer dimensionality) {
 		propertyChangeSupport.firePropertyChange("dimensionality",
 				this.dimensionality, this.dimensionality = dimensionality);
+	}
+
+	public String getDistribution() {
+		return distribution;
+	}
+
+	public void setDistribution(String distribution) {
+		this.distribution = distribution;
 	}
 
 }

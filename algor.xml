@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+  <resultSize>100</resultSize>
+  <algorithms>
+    <algorithm name="AG">
+      <lambda>0.4</lambda>
+      <damping>0.85</damping>
+      <weightThreshold>0.8</weightThreshold>
+    </algorithm>
+    <algorithm name="MMR">
+      <lambda>0.4</lambda>
+    </algorithm>
+    <algorithm name="MSD">
+      <lambda>0.4</lambda>
+    </algorithm>
+    <algorithm name="Motley">
+      <theta>0.001</theta>
+    </algorithm>
+    <algorithm name="Swap">
+      <upperBound>0.001</upperBound>
+    </algorithm>
+    <algorithm name="GrassHopper">
+      <damping>0.85</damping>
+    </algorithm>
+  </algorithms>
+</configuration>

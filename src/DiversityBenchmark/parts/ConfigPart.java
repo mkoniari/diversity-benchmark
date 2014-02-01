@@ -1,20 +1,19 @@
 package DiversityBenchmark.parts;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -60,16 +59,15 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
+import DiversityBenchmark.models.AdvanceDatasetParameter;
 import DiversityBenchmark.models.Algorithm;
 import DiversityBenchmark.models.AlgorithmModel;
 import DiversityBenchmark.models.Metric;
 import DiversityBenchmark.models.MetricModel;
 import DiversityBenchmark.models.SimulationParameter;
 import DiversityBenchmark.utils.Constant;
+import DiversityBenchmark.utils.Constant.DISTRIBUTION;
 import DiversityBenchmark.utils.ContextUtil;
 import DiversityBenchmark.utils.EventConstants;
 import DiversityBenchmark.utils.NumericValidator;
@@ -92,11 +90,14 @@ public class ConfigPart extends AbstractPart {
 	private ComboViewer distributionComboViewer;
 	private Text txtNumOfClusters;
 	private Text txtSizeOfClusters;
+	private AdvanceDatasetParameter advanceConfigPara;
 
 	final String[] observerValues = new String[] { "NumOfSubtopics",
 			"Relavence Difference", "NumOfResult", "Subtopic Dissimilarity" };
 
-	final String[] distributionValues = new String[] { "Normal", "Uniform" };
+	final String[] distributionValues = new String[] {
+			DISTRIBUTION.Normal.toString(), DISTRIBUTION.Cosine.toString(),
+			DISTRIBUTION.Powertail.toString() };
 	private Text txtAGWeight;
 	private Text txtGrassHopperDamping;
 	private Text txtMotleyTheta;
@@ -149,6 +150,7 @@ public class ConfigPart extends AbstractPart {
 	@PostConstruct
 	public void createComposite(Composite parent) {
 		simuPara = new SimulationParameter();
+		advanceConfigPara = new AdvanceDatasetParameter();
 		selectedAlgorithm = new AlgorithmModel();
 		selectedMetric = new MetricModel();
 		toolkit = new FormToolkit(parent.getDisplay());
@@ -231,6 +233,12 @@ public class ConfigPart extends AbstractPart {
 		if (simuPara.getIndex() != null) {
 			int index = simuPara.getIndex();
 			combo.select(index);
+		}
+
+		if (simuPara.getDistribution() != null) {
+			distributionCombo.setText(simuPara.getDistribution());
+		} else {
+			simuPara.setDistribution(distributionCombo.getText());
 		}
 
 		for (Text key : txtBindding.keySet()) {
@@ -610,6 +618,13 @@ public class ConfigPart extends AbstractPart {
 		distributionCombo.setItems(distributionValues);
 		distributionCombo.setText(distributionValues[0]);
 		distributionCombo.setVisibleItemCount(distributionValues.length);
+		distributionCombo.addListener(SWT.Modify, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				simuPara.setDistribution(distributionCombo.getText());
+			}
+		});
 
 	}
 
@@ -746,66 +761,145 @@ public class ConfigPart extends AbstractPart {
 	}
 
 	private void startSimulate() {
+		if (context.containsKey(Constant.ADVANCED_PARA)) {
+			advanceConfigPara = (AdvanceDatasetParameter) context
+					.get(Constant.ADVANCED_PARA);
+		}
+
 		try {
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-
-			// root elements
-			Document doc = docBuilder.newDocument();
-
-			Element rootElement = doc.createElement("company");
-			doc.appendChild(rootElement);
-
-			// staff elements
-			Element staff = doc.createElement("Staff");
-			rootElement.appendChild(staff);
-
-			// set attribute to staff element
-			Attr attr = doc.createAttribute("id");
-			attr.setValue("1");
-			staff.setAttributeNode(attr);
-
-			// shorten way
-			// staff.setAttribute("id", "1");
-
-			// firstname elements
-			Element firstname = doc.createElement("firstname");
-			firstname.appendChild(doc.createTextNode("yong"));
-			staff.appendChild(firstname);
-
-			// lastname elements
-			Element lastname = doc.createElement("lastname");
-			lastname.appendChild(doc.createTextNode("mook kim"));
-			staff.appendChild(lastname);
-
-			// nickname elements
-			Element nickname = doc.createElement("nickname");
-			nickname.appendChild(doc.createTextNode("mkyong"));
-			staff.appendChild(nickname);
-
-			// salary elements
-			Element salary = doc.createElement("salary");
-			salary.appendChild(doc.createTextNode("100000"));
-			staff.appendChild(salary);
-
-			// write the content into xml file
-			TransformerFactory transformerFactory = TransformerFactory
-					.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(doc);
-
-			StreamResult result = new StreamResult(new File("C:\\testing.xml"));
-			transformer.transform(source, result);
-
-			System.out.println("Done");
-
-		} catch (ParserConfigurationException pce) {
-			pce.printStackTrace();
-		} catch (TransformerException tfe) {
-			tfe.printStackTrace();
+			createAlgorXML();
+			createPropXML();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
 
+	private void createPropXML() throws IOException {
+		// Creating document
+		Document document = DocumentHelper.createDocument();
+		Element config = document.addElement("configuration");
+
+		config.addElement("NumCluster").setText(
+				String.valueOf(simuPara.getNumOfClusters()));
+		config.addElement("size").setText(
+				String.valueOf(simuPara.getSizeOfClusters()));
+		config.addElement("dimensionality").setText(
+				String.valueOf(simuPara.getDimensionality()));
+		config.addElement("maxClusterDistance").setText(
+				String.valueOf(advanceConfigPara.getMaxClusterDistance()));
+		config.addElement("minClusterDistance").setText(
+				String.valueOf(advanceConfigPara.getMinClusterDistance()));
+		config.addElement("maxRadius").setText(
+				String.valueOf(advanceConfigPara.getMaxRadius()));
+		config.addElement("minRadius").setText(
+				String.valueOf(advanceConfigPara.getMinRadius()));
+
+		Element centgen = config.addElement("centgen");
+		centgen.addAttribute("name", advanceConfigPara.getCentgenName());
+		centgen.addElement("distance").setText(
+				String.valueOf(advanceConfigPara.getCentgenDistance()));
+
+		Element clusters = config.addElement("clusters");
+		int n = simuPara.getNumOfClusters();
+		int sizeCluster = simuPara.getSizeOfClusters() / n;
+		for (int i = 0; i < n; i++) {
+			Element cluster = clusters.addElement("cluster");
+			cluster.addAttribute("dimensionality",
+					String.valueOf(simuPara.getDimensionality()));
+			cluster.addAttribute("size", String.valueOf(sizeCluster));
+			Element d = cluster.addElement("distribution");
+			String distributionName = simuPara.getDistribution();
+			d.addAttribute("name", simuPara.getDistribution());
+			switch (DISTRIBUTION.valueOf(distributionName)) {
+			case Cosine:
+				d.addElement("max").setText(
+						String.valueOf(advanceConfigPara.getMaxCosine()));
+				d.addElement("min").setText(
+						String.valueOf(advanceConfigPara.getMinCosine()));
+				break;
+			case Normal:
+				d.addElement("mean").setText(
+						String.valueOf(advanceConfigPara.getMeanNormal()));
+				d.addElement("std").setText(
+						String.valueOf(advanceConfigPara.getStdNormal()));
+				break;
+			case Powertail:
+				d.addElement("shape").setText(
+						String.valueOf(advanceConfigPara.getShapeTail()));
+				d.addElement("max").setText(
+						String.valueOf(advanceConfigPara.getMaxTail()));
+				d.addElement("min").setText(
+						String.valueOf(advanceConfigPara.getMinTail()));
+				break;
+			default:
+				break;
+			}
+
+			Element cor = cluster.addElement("coordinate_generator");
+			cor.addAttribute("name", "clustered");
+			cor.addElement("radius");
+			cor.addElement("centroid");
+
+		}
+		// Writing document contents to xml file
+		OutputFormat format = OutputFormat.createPrettyPrint();
+		XMLWriter output = new XMLWriter(new FileWriter(new File(propxml)),
+				format);
+		output.write(document);
+		output.close();
+		System.out.println("Completed generate prop.xml");
+
+	}
+
+	private void createAlgorXML() throws IOException {
+		// Creating document
+		Document document = DocumentHelper.createDocument();
+		Element config = document.addElement("configuration");
+
+		config.addElement("resultSize").setText("100");
+
+		Element algorithms = config.addElement("algorithms");
+		Element ag = algorithms.addElement("algorithm");
+		ag.addAttribute("name", "AG");
+		ag.addElement("lambda").setText("0.4");
+		ag.addElement("damping").setText("0.85");
+		ag.addElement("weightThreshold").setText(
+				String.valueOf(simuPara.getAgWeight()));
+
+		Element mmr = algorithms.addElement("algorithm");
+		mmr.addAttribute("name", "MMR");
+		mmr.addElement("lambda").setText(
+				String.valueOf(simuPara.getMmrLambda()));
+
+		Element mmd = algorithms.addElement("algorithm");
+		mmd.addAttribute("name", "MSD");
+		mmd.addElement("lambda").setText(
+				String.valueOf(simuPara.getMsdLambda()));
+
+		Element motley = algorithms.addElement("algorithm");
+		motley.addAttribute("name", "Motley");
+		motley.addElement("theta").setText(
+				String.valueOf(simuPara.getMotleyTheta()));
+
+		Element swap = algorithms.addElement("algorithm");
+		swap.addAttribute("name", "Swap");
+		swap.addElement("upperBound").setText(
+				String.valueOf(simuPara.getSwapUpperBound()));
+
+		Element grasshopper = algorithms.addElement("algorithm");
+		grasshopper.addAttribute("name", "GrassHopper");
+		grasshopper.addElement("damping").setText(
+				String.valueOf(simuPara.getGrassHopperDamping()));
+
+		// Writing document contents to xml file
+		OutputFormat format = OutputFormat.createPrettyPrint();
+		XMLWriter output = new XMLWriter(new FileWriter(new File(algorxml)),
+				format);
+		output.write(document);
+		output.close();
+		System.out.println("Completed generate algro.xml");
+
+	}
 }
