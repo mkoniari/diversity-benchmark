@@ -19,7 +19,7 @@ public class Constant {
 	public static final String METRIC = "metric";
 	public static final String EXISTINGPART = "existingPart";
 	public static final String NEWPART = "newPart";
-	public static final String OBSERVER = "observer";
+	public static final String FACTOR = "observer";
 	public static final String ADVANCED_PARA = "advancedPara";
 
 	public static final String SELECTALL = "Select All";
@@ -36,6 +36,10 @@ public class Constant {
 
 	public static enum METRIC {
 		ComputationTime, SRecall, NormalizedRelevance
+	};
+
+	public static enum FACTOR {
+		NumOfSubtopics, Relevance_Difference, NumOfResults, Subtopic_Dissimilarity
 	};
 
 	public static enum CENTGEN {

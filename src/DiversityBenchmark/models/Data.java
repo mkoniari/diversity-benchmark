@@ -1,29 +1,34 @@
 package DiversityBenchmark.models;
 
-
 public class Data extends AbstractModel {
 	private String evalID;
-	private String answerPerQuestion;
+	private String numberOfSubtopics;
+	private String relevanceDifference;
+	private String numOfResults;
+	private String subtopicDissimilarity;
 	private String algorithm;
-	private String workerEstimation;
-	private String accuracy;
-	private String duration;
-	private String observer;
+	private Double time;
+	private Double srecall;
+	private Double normalizedRelevance;
 
 	private void Data() {
 		// TODO Auto-generated method stub
 
 	}
 
-	public Data(String evalID, String answerPerQuestion, String algorithm, String workerEstimation,
-			String accuracy, String duration, String observer) {
+	public Data(String evalID, String algorithm, Double normalizedRelevance,
+			String numberOfSubtopics, String numOfResults,
+			String subtopicDissimilarity, Double time, Double srecall,
+			String relevanceDifference) {
 		this.evalID = evalID;
-		this.answerPerQuestion = answerPerQuestion;
 		this.algorithm = algorithm;
-		this.workerEstimation = workerEstimation;
-		this.accuracy = accuracy;
-		this.duration = duration;
-		this.observer = observer;
+		this.normalizedRelevance = normalizedRelevance;
+		this.numberOfSubtopics = numberOfSubtopics;
+		this.numOfResults = numOfResults;
+		this.subtopicDissimilarity = subtopicDissimilarity;
+		this.time = time;
+		this.srecall = srecall;
+		this.relevanceDifference = relevanceDifference;
 	}
 
 	public String getAlgorithm() {
@@ -35,32 +40,6 @@ public class Data extends AbstractModel {
 				this.algorithm = algorithm);
 	}
 
-	public String getAccuracy() {
-		return accuracy;
-	}
-
-	public void setAccuracy(String accuracy) {
-		propertyChangeSupport.firePropertyChange("accuracy", this.accuracy,
-				this.accuracy = accuracy);
-	}
-
-	public String getWorkerEstimation() {
-		return workerEstimation;
-	}
-
-	public void setWorkerEstimation(String workerEstimation) {
-		this.workerEstimation = workerEstimation;
-	}
-
-	public String getCompletionTime() {
-		return duration;
-	}
-
-	public void setCompletionTime(String duration) {
-		propertyChangeSupport.firePropertyChange("answer", this.duration,
-				this.duration = duration);
-	}
-
 	public String getEvalID() {
 		return evalID;
 	}
@@ -70,27 +49,78 @@ public class Data extends AbstractModel {
 				this.evalID = evalID);
 	}
 
-	public String getAnswerPerQuestion() {
-		return answerPerQuestion;
+	public String getNumberOfSubtopics() {
+		return numberOfSubtopics;
 	}
 
-	public void setAnswerPerQuestion(String answerPerQuestion) {
-		propertyChangeSupport.firePropertyChange("answerPerQuestion",
-				this.answerPerQuestion,
-				this.answerPerQuestion = answerPerQuestion);
+	public void setNumberOfSubtopics(String numberOfSubtopics) {
+		propertyChangeSupport.firePropertyChange("numberOfSubtopics",
+				this.numberOfSubtopics,
+				this.numberOfSubtopics = numberOfSubtopics);
 	}
 
-	@Override
-	public String toString() {
-		return evalID + "\t" + answerPerQuestion + "\t" + algorithm + "\t" + workerEstimation + "\t" 
-				+ accuracy + "\t" + duration + "\t" + observer;
+	public String getRelevanceDifference() {
+		return relevanceDifference;
 	}
 
-	public String getObserver() {
-		return observer;
+	public void setRelevanceDifference(String relevanceDifference) {
+		propertyChangeSupport.firePropertyChange("relevanceDifference",
+				this.relevanceDifference,
+				this.relevanceDifference = relevanceDifference);
 	}
 
-	public void setObserver(String observer) {
-		this.observer = observer;
+	public String getNumOfResults() {
+		return numOfResults;
 	}
+
+	public void setNumOfResults(String numOfResults) {
+		propertyChangeSupport.firePropertyChange("numOfResults",
+				this.numOfResults, this.numOfResults = numOfResults);
+	}
+
+	public String getSubtopicDissimilarity() {
+		return subtopicDissimilarity;
+	}
+
+	public void setSubtopicDissimilarity(String subtopicDissimilarity) {
+		propertyChangeSupport.firePropertyChange("subtopicDissimilarity",
+				this.subtopicDissimilarity,
+				this.subtopicDissimilarity = subtopicDissimilarity);
+	}
+
+	public Double getTime() {
+		return time;
+	}
+
+	public void setTime(Double time) {
+		propertyChangeSupport.firePropertyChange("time", this.time,
+				this.time = time);
+	}
+
+	public Double getSrecall() {
+		return srecall;
+	}
+
+	public void setSrecall(Double srecall) {
+		propertyChangeSupport.firePropertyChange("srecall", this.srecall,
+				this.srecall = srecall);
+	}
+
+	public Double getNormalizedRelevance() {
+		return normalizedRelevance;
+	}
+
+	public void setNormalizedRelevance(Double normalizedRelevance) {
+		propertyChangeSupport.firePropertyChange("normalizedRelevance",
+				this.normalizedRelevance,
+				this.normalizedRelevance = normalizedRelevance);
+	}
+
+	// @Override
+	// public String toString() {
+	// return evalID + "\t" + answerPerQuestion + "\t" + algorithm + "\t"
+	// + workerEstimation + "\t" + accuracy + "\t" + duration + "\t"
+	// + observer;
+	// }
+
 }

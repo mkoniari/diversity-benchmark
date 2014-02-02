@@ -19,19 +19,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.experimental.chart.swt.ChartComposite;
-import org.jfree.ui.RectangleInsets;
 
 import DiversityBenchmark.handlers.EvaluateHandler;
 import DiversityBenchmark.models.Data;
 import DiversityBenchmark.models.MetricModel;
 import DiversityBenchmark.utils.Constant;
+import DiversityBenchmark.utils.Constant.FACTOR;
 import DiversityBenchmark.utils.Constant.METRIC;
 import DiversityBenchmark.utils.EventConstants;
 
@@ -45,7 +43,7 @@ public class ChartPart {
 	@Inject
 	IEclipseContext context;
 	private JFreeChart chart;
-	private XYSeriesCollection dataset;
+	private DefaultCategoryDataset dataset;
 	private Composite parent;
 	private String xAxisTitle;
 	private String yAxisTitle;
@@ -53,7 +51,7 @@ public class ChartPart {
 	private String partID;
 
 	private METRIC curMetric;
-	private String curFactor;
+	private FACTOR curFactor;
 
 	@PostConstruct
 	public void createComposite(Composite parent) {
@@ -85,28 +83,35 @@ public class ChartPart {
 			}
 		}
 
-		Object observers = context.get(Constant.OBSERVER);
-		if (observers != null & observers instanceof String) {
-			curFactor = (String) observers;
-			xAxisTitle = curFactor;
+		Object factor = context.get(Constant.FACTOR);
+		if (factor != null & factor instanceof FACTOR) {
+			curFactor = (FACTOR) factor;
+			xAxisTitle = curFactor.toString();
 		}
 
 		chartTitle = "The effect of " + curFactor + " on "
 				+ String.valueOf(curMetric);
-		partID = EvaluateHandler.genPartID(curMetric, curFactor);
+		partID = EvaluateHandler.genPartID(curMetric, curFactor.toString());
 
-		dataset = new XYSeriesCollection();
-		// chartInfo = new HashMap<Constant.CHART_XY, XYSeriesCollection>();
-		// chartInfo.put(CHART_XY.AnswerPerQuestion_Accurary,
-		// new XYSeriesCollection());
-		// chartInfo.put(CHART_XY.AnswerPerQuestion_CompletionTime,
-		// new XYSeriesCollection());
+		dataset = new DefaultCategoryDataset();
 	}
 
 	private void createTestData() {
 		// CSVReader reader = new CSVReader();
 		// reader.readfile(Constant.RESULT_TEST_FILE);
 		// this.data = reader.getContent();
+
+		dataset.setValue(6, "Profit1", "Jane");
+		dataset.setValue(3, "Profit2", "Jane");
+		dataset.setValue(7, "Profit1", "Tom");
+		dataset.setValue(10, "Profit2", "Tom");
+		dataset.setValue(8, "Profit1", "Jill");
+		dataset.setValue(8, "Profit2", "Jill");
+		dataset.setValue(5, "Profit1", "John");
+		dataset.setValue(6, "Profit2", "John");
+		dataset.setValue(12, "Profit1", "Fred");
+		dataset.setValue(5, "Profit2", "Fred");
+
 	}
 
 	// private JFreeChart createChart(List<Data> data, CHART_XY chartType) {
@@ -117,7 +122,7 @@ public class ChartPart {
 	// // return createChart(createDataSet(data, chartType), chartType);
 	// }
 
-	private JFreeChart createChart(XYDataset dataset) {
+	private JFreeChart createChart(CategoryDataset dataset) {
 
 		// switch (chartType) {
 		// case AnswerPerQuestion_Accurary:
@@ -134,8 +139,9 @@ public class ChartPart {
 		// default:
 		// break;
 		// }
-		JFreeChart chart = ChartFactory.createXYLineChart(chartTitle,
-				xAxisTitle, // x axis label
+		JFreeChart chart = ChartFactory.createBarChart(chartTitle, xAxisTitle, // x
+																				// axis
+																				// label
 				yAxisTitle, // y axis label
 				dataset, // data
 				PlotOrientation.VERTICAL, true, // include legend
@@ -144,21 +150,21 @@ public class ChartPart {
 				);
 		chart.setBackgroundPaint(Color.white);
 
-		XYPlot plot = (XYPlot) chart.getPlot();
-		plot.setBackgroundPaint(Color.lightGray);
-		// plot.setBackgroundPaint(Color.white);
-		plot.setDomainGridlinePaint(Color.white);
-		plot.setRangeGridlinePaint(Color.white);
-		plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-		plot.setDomainCrosshairVisible(true);
-		plot.setRangeCrosshairVisible(true);
+		chart.getTitle().setPaint(Color.blue); // Adjust the colour of the title
+		CategoryPlot plot = chart.getCategoryPlot();
+		plot.setBackgroundPaint(Color.lightGray); // Modify the plot background
+		// plot.setDomainGridlinePaint(Color.white);
+		// plot.setRangeGridlinePaint(Color.white);
+		// plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
+		// plot.setDomainCrosshairVisible(true);
+		// plot.setRangeCrosshairVisible(true);
 
-		XYItemRenderer r = plot.getRenderer();
-		if (r instanceof XYLineAndShapeRenderer) {
-			XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
-			renderer.setBaseShapesVisible(true);
-			renderer.setBaseShapesFilled(true);
-		}
+		// XYItemRenderer r = plot.getRenderer();
+		// if (r instanceof XYLineAndShapeRenderer) {
+		// XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
+		// renderer.setBaseShapesVisible(true);
+		// renderer.setBaseShapesFilled(true);
+		// }
 
 		// change the auto tick unit selection to integer units only...
 		NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
@@ -167,11 +173,11 @@ public class ChartPart {
 		return chart;
 	}
 
-	private XYDataset createDataSet(List<Data> data) {
+	private CategoryDataset createDataSet(List<Data> data) {
 		if (data == null) {
 			return dataset;
 		} else {
-			dataset.removeAllSeries();
+			dataset.clear();
 		}
 		map = new HashMap<String, List<Data>>();
 		for (Data d : data) {
@@ -196,7 +202,7 @@ public class ChartPart {
 		// dataset.addSeries(series);
 		// }
 		// break;
-		//
+
 		// case AnswerPerQuestion_Accurary:
 		// for (String algo : map.keySet()) {
 		// List<Data> value = map.get(algo);
@@ -211,6 +217,28 @@ public class ChartPart {
 		// }
 		switch (curMetric) {
 		case NormalizedRelevance:
+			for (Data d : data) {
+				switch (curFactor) {
+				case NumOfResults:
+					dataset.setValue(d.getNormalizedRelevance(),
+							d.getAlgorithm(), d.getNumOfResults());
+					break;
+				case NumOfSubtopics:
+					dataset.setValue(d.getNormalizedRelevance(),
+							d.getAlgorithm(), d.getNumberOfSubtopics());
+					break;
+				case Relevance_Difference:
+					dataset.setValue(d.getNormalizedRelevance(),
+							d.getAlgorithm(), d.getRelevanceDifference());
+					break;
+				case Subtopic_Dissimilarity:
+					dataset.setValue(d.getNormalizedRelevance(),
+							d.getAlgorithm(), d.getSubtopicDissimilarity());
+					break;
+				default:
+					break;
+				}
+			}
 			// for (String algo : map.keySet()) {
 			// List<Data> value = map.get(algo);
 			// XYSeries series = new XYSeries(algo);
@@ -222,26 +250,52 @@ public class ChartPart {
 			// }
 			break;
 		case SRecall:
-			// for (String algo : map.keySet()) {
-			// List<Data> value = map.get(algo);
-			// XYSeries series = new XYSeries(algo);
-			// for (Data d : value) {
-			// series.add(Double.valueOf(d.getObserver()),
-			// Double.valueOf(d.getAccuracy()));
-			// }
-			// dataset.addSeries(series);
-			// }
+			for (Data d : data) {
+				switch (curFactor) {
+				case NumOfResults:
+					dataset.setValue(d.getSrecall(), d.getAlgorithm(),
+							d.getNumOfResults());
+					break;
+				case NumOfSubtopics:
+					dataset.setValue(d.getSrecall(), d.getAlgorithm(),
+							d.getNumberOfSubtopics());
+					break;
+				case Relevance_Difference:
+					dataset.setValue(d.getSrecall(), d.getAlgorithm(),
+							d.getRelevanceDifference());
+					break;
+				case Subtopic_Dissimilarity:
+					dataset.setValue(d.getSrecall(), d.getAlgorithm(),
+							d.getSubtopicDissimilarity());
+					break;
+				default:
+					break;
+				}
+			}
 			break;
 		case ComputationTime:
-			// for (String algo : map.keySet()) {
-			// List<Data> value = map.get(algo);
-			// XYSeries series = new XYSeries(algo);
-			// for (Data d : value) {
-			// series.add(Double.valueOf(d.getObserver()),
-			// Double.valueOf(d.getCompletionTime()));
-			// }
-			// dataset.addSeries(series);
-			// }
+			for (Data d : data) {
+				switch (curFactor) {
+				case NumOfResults:
+					dataset.setValue(d.getTime(), d.getAlgorithm(),
+							d.getNumOfResults());
+					break;
+				case NumOfSubtopics:
+					dataset.setValue(d.getTime(), d.getAlgorithm(),
+							d.getNumberOfSubtopics());
+					break;
+				case Relevance_Difference:
+					dataset.setValue(d.getTime(), d.getAlgorithm(),
+							d.getRelevanceDifference());
+					break;
+				case Subtopic_Dissimilarity:
+					dataset.setValue(d.getTime(), d.getAlgorithm(),
+							d.getSubtopicDissimilarity());
+					break;
+				default:
+					break;
+				}
+			}
 			break;
 		default:
 			break;

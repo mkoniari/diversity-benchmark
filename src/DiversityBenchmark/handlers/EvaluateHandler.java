@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import DiversityBenchmark.models.Metric;
 import DiversityBenchmark.models.MetricModel;
 import DiversityBenchmark.utils.Constant;
+import DiversityBenchmark.utils.Constant.FACTOR;
 import DiversityBenchmark.utils.Constant.METRIC;
 import DiversityBenchmark.utils.ContextUtil;
 import DiversityBenchmark.utils.EventConstants;
@@ -53,14 +54,14 @@ public class EvaluateHandler {
 		Object o = context.get(Constant.METRIC);
 		assert o != null;
 
-		Object o1 = context.get(Constant.OBSERVER);
+		Object o1 = context.get(Constant.FACTOR);
 		assert o1 != null;
-		String observer = null;
-		if (o1 instanceof String) {
-			observer = (String) o1;
+		FACTOR factor = null;
+		if (o1 instanceof FACTOR) {
+			factor = (FACTOR) o1;
 		}
 
-		assert observer != null;
+		assert factor != null;
 
 		if (o instanceof MetricModel) {
 			newPart.clear();
@@ -68,7 +69,7 @@ public class EvaluateHandler {
 			// System.out.println(metrics.toString());
 			for (Metric metric : metrics.getMetrics()) {
 				String partID = genPartID(METRIC.valueOf(metric.getName()),
-						observer);
+						factor.toString());
 				if (!existingPart.contains(partID)) {
 					MetricModel selectedMetric = new MetricModel();
 					selectedMetric.getMetrics().clear();
@@ -80,7 +81,7 @@ public class EvaluateHandler {
 							+ partID);
 					part.setContributionURI("bundleclass://DiversityBenchmark/DiversityBenchmark.parts.ChartPart");
 					part.setContext(context);
-					part.setLabel(metric.getName() + " vs. " + observer);
+					part.setLabel(metric.getName() + " vs. " + factor);
 					// part.setCloseable(true);
 					stacks.get(0).getChildren().add(part);
 					partService.showPart(part, PartState.ACTIVATE);

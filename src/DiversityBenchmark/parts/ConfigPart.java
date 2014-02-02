@@ -68,6 +68,7 @@ import DiversityBenchmark.models.MetricModel;
 import DiversityBenchmark.models.SimulationParameter;
 import DiversityBenchmark.utils.Constant;
 import DiversityBenchmark.utils.Constant.DISTRIBUTION;
+import DiversityBenchmark.utils.Constant.FACTOR;
 import DiversityBenchmark.utils.ContextUtil;
 import DiversityBenchmark.utils.EventConstants;
 import DiversityBenchmark.utils.NumericValidator;
@@ -92,8 +93,11 @@ public class ConfigPart extends AbstractPart {
 	private Text txtSizeOfClusters;
 	private AdvanceDatasetParameter advanceConfigPara;
 
-	final String[] observerValues = new String[] { "NumOfSubtopics",
-			"Relavence Difference", "NumOfResult", "Subtopic Dissimilarity" };
+	final String[] observerValues = new String[] {
+			FACTOR.NumOfSubtopics.toString(),
+			FACTOR.Relevance_Difference.toString(),
+			FACTOR.NumOfResults.toString(),
+			FACTOR.Subtopic_Dissimilarity.toString() };
 
 	final String[] distributionValues = new String[] {
 			DISTRIBUTION.Normal.toString(), DISTRIBUTION.Cosine.toString(),
@@ -364,7 +368,7 @@ public class ConfigPart extends AbstractPart {
 		comboViewer.setLabelProvider(new LabelProvider()); // org.eclipse.jface.viewers.LabelProvider()
 
 		combo.setItems(observerValues);
-		// combo.setText(observerValues[0]);
+		combo.setText(observerValues[0]);
 		combo.setVisibleItemCount(observerValues.length);
 		combo.addListener(SWT.Modify, new Listener() {
 
@@ -690,8 +694,8 @@ public class ConfigPart extends AbstractPart {
 		ContextUtil.updateContext(context, Constant.METRIC, selectedMetric);
 
 		System.out.println("Update observer to context");
-		ContextUtil.updateContext(context, Constant.OBSERVER,
-				observerValues[index]);
+		ContextUtil.updateContext(context, Constant.FACTOR,
+				FACTOR.valueOf(observerValues[index]));
 
 	}
 
