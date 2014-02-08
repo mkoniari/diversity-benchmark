@@ -23,7 +23,10 @@ Require-Bundle: javax.inject;bundle-version="1.0.0",
  org.eclipse.e4.core.commands;bundle-version="0.10.1",
  org.eclipse.e4.ui.bindings;bundle-version="0.10.1",
  org.eclipse.ui.forms;bundle-version="3.5.200"
-Import-Package: javax.annotation;version="1.0.0"
+Import-Package: javax.annotation;version="1.0.0",
+ org.eclipse.e4.ui.model.application,
+ org.eclipse.e4.ui.model.application.ui,
+ org.eclipse.e4.ui.model.application.ui.basic
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: lib/dom4j-1.6.1.jar,
  lib/javacsv.jar,
