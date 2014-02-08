@@ -76,6 +76,8 @@ import DiversityBenchmark.utils.ContextUtil;
 import DiversityBenchmark.utils.EventConstants;
 import DiversityBenchmark.utils.NumericValidator;
 
+import com.benchmark.exp.ExpNumSubtopic;
+
 public class ConfigPart extends AbstractPart {
 
 	private FormToolkit toolkit;
@@ -133,8 +135,9 @@ public class ConfigPart extends AbstractPart {
 	private NumericValidator validator = null;
 	private Composite composite_1;
 
-	private String propxml = "prop.xml";
-	private String algorxml = "algor.xml";
+	private String propxml = "prop";
+	private String algorxml = "algor";
+	private String data = "data";
 
 	@Inject
 	IEventBroker chart;
@@ -736,7 +739,7 @@ public class ConfigPart extends AbstractPart {
 			@UIEventTopic(EventConstants.DATA_SIMULATING_START) String s) {
 		// start simulate
 		System.out.println("Simulating data...");
-		startSimulate();
+		// startSimulate();
 		System.out.println("Data Generated");
 		// broker.send(EventConstants.DATA_UPDATE_CLEAR, 0);
 
@@ -759,36 +762,57 @@ public class ConfigPart extends AbstractPart {
 			double value = start;
 			// System.out.println("value: " + value + ", key: " + attribute);
 			// test(initHashMap(value, attribute));
-			filename 
-			Exp exp = new ExpNumSubtopic(outFile, algorCon, filename);
-			// TODO calling experiment logic to generate the data
+
+			String outFile = data + "_" + value;
+			String algorCon = algorxml + "_" + value + ".xml";
+			String dataCon = propxml + "_" + value + ".xml";
+			String resFile = "res" + "_" + value + ".csv";
+
+			if (context.containsKey(Constant.ADVANCED_PARA)) {
+				advanceConfigPara = (AdvanceDatasetParameter) context
+						.get(Constant.ADVANCED_PARA);
+			}
+
+			try {
+				createAlgorXML(algorCon);
+				createPropXML(dataCon);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			ExpNumSubtopic exp = new ExpNumSubtopic(outFile, algorCon, dataCon);
 			exp.run();
-			List<Data> data = exp.writeResults();
+			List<Data> data = writeResults(exp, resFile);
 			datas.addAll(data);
 
 			start += step;
 			evalID++;
 		}
+		chart.post(EventConstants.RESULT_UPDATE_UPDATED, datas);
 		System.out.println("End Evaluting...");
 	}
 
 	private void startSimulate() {
-		if (context.containsKey(Constant.ADVANCED_PARA)) {
-			advanceConfigPara = (AdvanceDatasetParameter) context
-					.get(Constant.ADVANCED_PARA);
-		}
-
-		try {
-			createAlgorXML();
-			createPropXML();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 	}
 
-	private void createPropXML() throws IOException {
+	private List<Data> writeResults(ExpNumSubtopic exp, String resultFile) {
+		List<Data> retVal = new ArrayList<Data>();
+		int evalID = 0;
+		for (String algor : exp.algor2recall.keySet()) {
+			DiversityBenchmark.models.Algorithm algorithm = new DiversityBenchmark.models.Algorithm();
+			algorithm.setName(algor);
+			Data data = new Data(evalID + "", algor, exp.algor2nrel.get(algor),
+					exp.ds.getNumberOfClusters() + "",
+					exp.alLoader.getNumResults() + "", 0 + "", 0.0,
+					exp.algor2recall.get(algor), 0 + "");
+			evalID++;
+			retVal.add(data);
+		}
+		return retVal;
+	}
+
+	private void createPropXML(String fileName) throws IOException {
 		// Creating document
 		Document document = DocumentHelper.createDocument();
 		Element config = document.addElement("configuration");
@@ -808,7 +832,6 @@ public class ConfigPart extends AbstractPart {
 		config.addElement("minRadius").setText(
 				String.valueOf(advanceConfigPara.getMinRadius()));
 
-		
 		Element centgen = config.addElement("centgen");
 		centgen.addAttribute("name", advanceConfigPara.getCentgenName());
 		centgen.addElement("distance").setText(
@@ -858,7 +881,7 @@ public class ConfigPart extends AbstractPart {
 		}
 		// Writing document contents to xml file
 		OutputFormat format = OutputFormat.createPrettyPrint();
-		XMLWriter output = new XMLWriter(new FileWriter(new File(propxml)),
+		XMLWriter output = new XMLWriter(new FileWriter(new File(fileName)),
 				format);
 		output.write(document);
 		output.close();
@@ -866,12 +889,12 @@ public class ConfigPart extends AbstractPart {
 
 	}
 
-	private void createAlgorXML() throws IOException {
+	private void createAlgorXML(String fileName) throws IOException {
 		// Creating document
 		Document document = DocumentHelper.createDocument();
 		Element config = document.addElement("configuration");
 
-		config.addElement("resultSize").setText("100");
+		config.addElement("resultSize").setText("10");
 
 		Element algorithms = config.addElement("algorithms");
 		Element ag = algorithms.addElement("algorithm");
@@ -908,7 +931,7 @@ public class ConfigPart extends AbstractPart {
 
 		// Writing document contents to xml file
 		OutputFormat format = OutputFormat.createPrettyPrint();
-		XMLWriter output = new XMLWriter(new FileWriter(new File(algorxml)),
+		XMLWriter output = new XMLWriter(new FileWriter(new File(fileName)),
 				format);
 		output.write(document);
 		output.close();

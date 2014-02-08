@@ -101,16 +101,16 @@ public class ChartPart {
 		// reader.readfile(Constant.RESULT_TEST_FILE);
 		// this.data = reader.getContent();
 
-		dataset.setValue(6, "Profit1", "Jane");
-		dataset.setValue(3, "Profit2", "Jane");
-		dataset.setValue(7, "Profit1", "Tom");
-		dataset.setValue(10, "Profit2", "Tom");
-		dataset.setValue(8, "Profit1", "Jill");
-		dataset.setValue(8, "Profit2", "Jill");
-		dataset.setValue(5, "Profit1", "John");
-		dataset.setValue(6, "Profit2", "John");
-		dataset.setValue(12, "Profit1", "Fred");
-		dataset.setValue(5, "Profit2", "Fred");
+		// dataset.setValue(6, "Profit1", "Jane");
+		// dataset.setValue(3, "Profit2", "Jane");
+		// dataset.setValue(7, "Profit1", "Tom");
+		// dataset.setValue(10, "Profit2", "Tom");
+		// dataset.setValue(8, "Profit1", "Jill");
+		// dataset.setValue(8, "Profit2", "Jill");
+		// dataset.setValue(5, "Profit1", "John");
+		// dataset.setValue(6, "Profit2", "John");
+		// dataset.setValue(12, "Profit1", "Fred");
+		// dataset.setValue(5, "Profit2", "Fred");
 
 	}
 

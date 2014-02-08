@@ -1,5 +1,7 @@
 package DiversityBenchmark.models;
 
+import DiversityBenchmark.utils.Constant.CENTGEN;
+
 public class AdvanceDatasetParameter extends AbstractModel {
 	private Double maxClusterDistance;
 	private Double minClusterDistance;
@@ -23,14 +25,15 @@ public class AdvanceDatasetParameter extends AbstractModel {
 		maxRadius = new Double(0.25);
 		minRadius = new Double(0.25);
 
-		maxCosine = new Double(0);
+		maxCosine = new Double(1.0);
 		minCosine = new Double(0);
-		meanNormal = new Double(0);
-		stdNormal = new Double(0);
-		shapeTail = new Double(0);
-		maxTail = new Double(0);
-		minTail = new Double(0);
+		meanNormal = new Double(0.5);
+		stdNormal = new Double(0.1);
+		shapeTail = new Double(20);
+		maxTail = new Double(1.0);
+		minTail = new Double(0.8);
 		centgenDistance = new Double(0.5);
+		centgenName = CENTGEN.Circle.toString();
 	}
 
 	public Double getMaxClusterDistance() {

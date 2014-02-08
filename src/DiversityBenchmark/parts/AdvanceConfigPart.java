@@ -39,6 +39,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 import DiversityBenchmark.models.AdvanceDatasetParameter;
 import DiversityBenchmark.utils.Constant;
+import DiversityBenchmark.utils.Constant.CENTGEN;
 import DiversityBenchmark.utils.ContextUtil;
 import DiversityBenchmark.utils.NumericValidator;
 
@@ -47,7 +48,8 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 
 	private FormToolkit toolkit;
 	private Form form;
-	final String[] observerValues = new String[] { "Circle", "Line" };
+	final String[] observerValues = new String[] { CENTGEN.Circle.toString(),
+			CENTGEN.Line.toString() };
 
 	private Section sctnDataset;
 	private Composite datasetComposite;

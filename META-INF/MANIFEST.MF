@@ -34,4 +34,5 @@ Bundle-ClassPath: lib/dom4j-1.6.1.jar,
  lib/jfreechart-1.0.13-experimental.jar,
  lib/jfreechart-1.0.13-swt.jar,
  lib/jfreechart-1.0.13.jar,
- .
+ .,
+ lib/benchmark_fat.jar
