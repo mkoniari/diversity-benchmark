@@ -3,7 +3,9 @@ package DiversityBenchmark.parts;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -63,6 +65,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import DiversityBenchmark.models.AdvanceDatasetParameter;
 import DiversityBenchmark.models.Algorithm;
 import DiversityBenchmark.models.AlgorithmModel;
+import DiversityBenchmark.models.Data;
 import DiversityBenchmark.models.Metric;
 import DiversityBenchmark.models.MetricModel;
 import DiversityBenchmark.models.SimulationParameter;
@@ -750,13 +753,18 @@ public class ConfigPart extends AbstractPart {
 		double start = minvalue;
 		int evalID = 0;
 		System.out.println("Start Evaluating...");
+		List<Data> datas = new ArrayList<Data>();
 		while (start <= maxValue) {
 
 			double value = start;
 			// System.out.println("value: " + value + ", key: " + attribute);
 			// test(initHashMap(value, attribute));
-
+			filename 
+			Exp exp = new ExpNumSubtopic(outFile, algorCon, filename);
 			// TODO calling experiment logic to generate the data
+			exp.run();
+			List<Data> data = exp.writeResults();
+			datas.addAll(data);
 
 			start += step;
 			evalID++;
@@ -800,6 +808,7 @@ public class ConfigPart extends AbstractPart {
 		config.addElement("minRadius").setText(
 				String.valueOf(advanceConfigPara.getMinRadius()));
 
+		
 		Element centgen = config.addElement("centgen");
 		centgen.addAttribute("name", advanceConfigPara.getCentgenName());
 		centgen.addElement("distance").setText(
