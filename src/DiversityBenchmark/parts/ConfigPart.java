@@ -802,9 +802,13 @@ public class ConfigPart extends AbstractPart {
 		for (String algor : exp.algor2recall.keySet()) {
 			DiversityBenchmark.models.Algorithm algorithm = new DiversityBenchmark.models.Algorithm();
 			algorithm.setName(algor);
+//			Data data = new Data(evalID + "", algor, exp.algor2nrel.get(algor),
+//					exp.ds.getNumberOfClusters() + "",
+//					exp.alLoader.getNumResults() + "", exp.dsLoader.getSubtopicDissimilarityDistance() + "", exp.algor2time.get(algor),
+//					exp.algor2recall.get(algor), 0 + "");
 			Data data = new Data(evalID + "", algor, exp.algor2nrel.get(algor),
 					exp.ds.getNumberOfClusters() + "",
-					exp.alLoader.getNumResults() + "", 0 + "", 0.0,
+					exp.alLoader.getNumResults() + "", 0 + "", (long) 0,
 					exp.algor2recall.get(algor), 0 + "");
 			evalID++;
 			retVal.add(data);
