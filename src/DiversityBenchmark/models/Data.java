@@ -7,7 +7,7 @@ public class Data extends AbstractModel {
 	private String numOfResults;
 	private String subtopicDissimilarity;
 	private String algorithm;
-	private Double time;
+	private Long time;
 	private Double srecall;
 	private Double normalizedRelevance;
 
@@ -18,7 +18,7 @@ public class Data extends AbstractModel {
 
 	public Data(String evalID, String algorithm, Double normalizedRelevance,
 			String numberOfSubtopics, String numOfResults,
-			String subtopicDissimilarity, Double time, Double srecall,
+			String subtopicDissimilarity, Long time, Double srecall,
 			String relevanceDifference) {
 		this.evalID = evalID;
 		this.algorithm = algorithm;
@@ -88,11 +88,11 @@ public class Data extends AbstractModel {
 				this.subtopicDissimilarity = subtopicDissimilarity);
 	}
 
-	public Double getTime() {
+	public Long getTime() {
 		return time;
 	}
 
-	public void setTime(Double time) {
+	public void setTime(Long time) {
 		propertyChangeSupport.firePropertyChange("time", this.time,
 				this.time = time);
 	}
