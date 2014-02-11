@@ -18,7 +18,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.CategoryDataset;
@@ -167,8 +166,8 @@ public class ChartPart {
 		// }
 
 		// change the auto tick unit selection to integer units only...
-		NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+		// NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+		// rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
 		return chart;
 	}

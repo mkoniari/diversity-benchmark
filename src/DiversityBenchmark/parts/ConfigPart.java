@@ -780,7 +780,7 @@ public class ConfigPart extends AbstractPart {
 
 			try {
 				createAlgorXML(algorCon, factor, value);
-				createPropXML(dataCon, factor, value, evalID);
+				createPropXML(dataCon, factor, value);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -821,15 +821,15 @@ public class ConfigPart extends AbstractPart {
 					exp.alLoader.getNumResults() + "",
 					exp.dsLoader.getSubtopicDissimilarityDistance() + "",
 					exp.algor2time.get(algor), exp.algor2recall.get(algor),
-					0 + "");
+					exp.dsLoader.getRelevanceDifference() + "");
 			evalID++;
 			retVal.add(data);
 		}
 		return retVal;
 	}
 
-	private void createPropXML(String fileName, FACTOR factor, double value,
-			int evalID) throws IOException {
+	private void createPropXML(String fileName, FACTOR factor, double value)
+			throws IOException {
 		// Creating document
 		Document document = DocumentHelper.createDocument();
 		Element config = document.addElement("configuration");
@@ -897,7 +897,7 @@ public class ConfigPart extends AbstractPart {
 				break;
 			case Normal:
 				Double std = advanceConfigPara.getStdNormal();
-				Double mean = advanceConfigPara.getMeanNormal() + evalID
+				Double mean = advanceConfigPara.getMeanNormal() + i
 						* relDifferenceValue;
 				if (mean > 0.9)
 					mean = 0.9;
