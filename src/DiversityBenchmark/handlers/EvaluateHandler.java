@@ -33,6 +33,9 @@ public class EvaluateHandler {
 	private Set<String> existingPart = new HashSet<String>();
 	private Set<String> newPart = new HashSet<String>();
 
+	private Set<String> existing3DPart = new HashSet<String>();
+	private Set<String> new3DPart = new HashSet<String>();
+
 	// @Execute
 	// public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell) {
 	// // sent signal to simulate model
@@ -47,9 +50,83 @@ public class EvaluateHandler {
 
 		// Request update metric to context
 		eval_start.send(EventConstants.METRIC_OBSERVER_UPDATE_UPDATED, "start");
+		String partStackURI = "diversitybenchmark.partstack.chart";
+		String chartPartURI = "diversitybenchmark.part.chartview.";
+		String chartPartClass = "bundleclass://DiversityBenchmark/DiversityBenchmark.parts.ChartPart";
+		genChartPart(partService, application, modelService, context,
+				partStackURI, chartPartURI, chartPartClass);
 
+		String part3DStackURI = "diversitybenchmark.partstack.chart3D";
+		String chart3DPartURI = "diversitybenchmark.part.chart3Dview.";
+		String chart3DPartClass = "bundleclass://DiversityBenchmark/DiversityBenchmark.parts.Chart3DPart";
+		genChart3DPart(partService, application, modelService, context,
+				part3DStackURI, chart3DPartURI, chart3DPartClass);
+
+		// Add your Java objects to the context
+		// context.set(MyDataObject.class.getName(), data);
+		// context.set(MoreStuff.class, moreData);
+
+		eval_start.send(EventConstants.FUNCTION_SIMULATING_START, "start");
+	}
+
+	private void genChart3DPart(EPartService partService,
+			MApplication application, EModelService modelService,
+			IEclipseContext context, String partStackURI, String chartPartURI,
+			String chartPartClass) {
 		List<MPartStack> stacks = modelService.findElements(application,
-				"diversitybenchmark.partstack.chart", MPartStack.class, null);
+				partStackURI, MPartStack.class, null);
+
+		Object o = context.get(Constant.METRIC);
+		assert o != null;
+
+		Object o1 = context.get(Constant.FACTOR);
+		assert o1 != null;
+		FACTOR factor = null;
+		if (o1 instanceof FACTOR) {
+			factor = (FACTOR) o1;
+		}
+
+		assert factor != null;
+
+		if (o instanceof MetricModel) {
+			new3DPart.clear();
+			MetricModel metrics = (MetricModel) o;
+			// System.out.println(metrics.toString());
+			for (Metric metric : metrics.getMetrics()) {
+				String partID = genPartID(METRIC.valueOf(metric.getName()),
+						factor.toString());
+				if (!existing3DPart.contains(partID)) {
+					MetricModel selectedMetric = new MetricModel();
+					selectedMetric.getMetrics().clear();
+					selectedMetric.getMetrics().add(metric);
+					context.modify(Constant.METRIC, selectedMetric);
+
+					MPart part = MBasicFactory.INSTANCE.createPart();
+					part.setElementId(chartPartURI + partID);
+					part.setContributionURI(chartPartClass);
+					part.setContext(context);
+					part.setLabel(metric.getName() + " vs. " + factor);
+					// part.setCloseable(true);
+					stacks.get(0).getChildren().add(part);
+					partService.showPart(part, PartState.ACTIVATE);
+				}
+				new3DPart.add(partID);
+				existing3DPart.add(partID);
+			}
+
+		}
+
+		ContextUtil.updateContext(context, Constant.EXISTING3DPART,
+				existing3DPart);
+		ContextUtil.updateContext(context, Constant.NEW3DPART, new3DPart);
+	}
+
+	private void genChartPart(EPartService partService,
+			MApplication application, EModelService modelService,
+			IEclipseContext context, String partStackURI, String chartPartURI,
+			String chartPartClass) {
+		List<MPartStack> stacks = modelService.findElements(application,
+				partStackURI, MPartStack.class, null);
 
 		Object o = context.get(Constant.METRIC);
 		assert o != null;
@@ -77,9 +154,8 @@ public class EvaluateHandler {
 					context.modify(Constant.METRIC, selectedMetric);
 
 					MPart part = MBasicFactory.INSTANCE.createPart();
-					part.setElementId("diversitybenchmark.part.chartview."
-							+ partID);
-					part.setContributionURI("bundleclass://DiversityBenchmark/DiversityBenchmark.parts.ChartPart");
+					part.setElementId(chartPartURI + partID);
+					part.setContributionURI(chartPartClass);
 					part.setContext(context);
 					part.setLabel(metric.getName() + " vs. " + factor);
 					// part.setCloseable(true);
@@ -94,12 +170,6 @@ public class EvaluateHandler {
 
 		ContextUtil.updateContext(context, Constant.EXISTINGPART, existingPart);
 		ContextUtil.updateContext(context, Constant.NEWPART, newPart);
-
-		// Add your Java objects to the context
-		// context.set(MyDataObject.class.getName(), data);
-		// context.set(MoreStuff.class, moreData);
-
-		eval_start.send(EventConstants.FUNCTION_SIMULATING_START, "start");
 	}
 
 	public static String genPartID(METRIC metric, String observer) {
@@ -113,6 +183,10 @@ public class EvaluateHandler {
 		default:
 			throw new IllegalArgumentException(String.valueOf(metric));
 		}
+	}
+
+	public static String genPartID(String curAlgorithm, String curFactor) {
+		return curAlgorithm.toLowerCase() + "_" + curFactor.toLowerCase();
 	}
 
 }

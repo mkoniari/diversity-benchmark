@@ -10,5 +10,8 @@
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.13.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/benchmark_fat.jar" sourcepath="/benchmark"/>
+	<classpathentry kind="lib" path="lib/jzy3d-swt-0.9.1.jar"/>
+	<classpathentry kind="lib" path="lib/jzy3d-api-0.9.1.jar"/>
+	<classpathentry kind="lib" path="lib/jzy3d-jdt-core-0.9.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

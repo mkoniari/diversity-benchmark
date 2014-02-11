@@ -61,6 +61,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.jzy3d.plot3d.primitives.Scatter;
 
 import DiversityBenchmark.models.AdvanceDatasetParameter;
 import DiversityBenchmark.models.Algorithm;
@@ -141,6 +142,9 @@ public class ConfigPart extends AbstractPart {
 
 	@Inject
 	IEventBroker chart;
+
+	@Inject
+	IEventBroker chart3D;
 
 	@Inject
 	IEclipseContext context;
@@ -751,12 +755,13 @@ public class ConfigPart extends AbstractPart {
 			return;
 		}
 		double interval = maxValue - minvalue;
-		String factor = observerValues[index];
+		FACTOR factor = FACTOR.valueOf(observerValues[index]);
 
 		double start = minvalue;
 		int evalID = 0;
 		System.out.println("Start Evaluating...");
 		List<Data> datas = new ArrayList<Data>();
+		Map<Double, ExpNumSubtopic> expRes = new HashMap<>();
 		while (start <= maxValue) {
 
 			double value = start;
@@ -774,8 +779,8 @@ public class ConfigPart extends AbstractPart {
 			}
 
 			try {
-				createAlgorXML(algorCon);
-				createPropXML(dataCon);
+				createAlgorXML(algorCon, factor, value);
+				createPropXML(dataCon, factor, value, evalID);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -785,10 +790,14 @@ public class ConfigPart extends AbstractPart {
 			List<Data> data = writeResults(exp, resFile);
 			datas.addAll(data);
 
+			expRes.put(start, exp);
+
 			start += step;
 			evalID++;
 		}
 		chart.post(EventConstants.RESULT_UPDATE_UPDATED, datas);
+		Scatter scatter = expRes.values().iterator().next().generateScatter();
+		chart3D.post(EventConstants.RESULT_UPDATE_UPDATED, scatter);
 		System.out.println("End Evaluting...");
 	}
 
@@ -802,23 +811,35 @@ public class ConfigPart extends AbstractPart {
 		for (String algor : exp.algor2recall.keySet()) {
 			DiversityBenchmark.models.Algorithm algorithm = new DiversityBenchmark.models.Algorithm();
 			algorithm.setName(algor);
+			// Data data = new Data(evalID + "", algor,
+			// exp.algor2nrel.get(algor),
+			// exp.ds.getNumberOfClusters() + "",
+			// exp.alLoader.getNumResults() + "", 0 + "", 0.0,
+			// exp.algor2recall.get(algor), 0 + "");
 			Data data = new Data(evalID + "", algor, exp.algor2nrel.get(algor),
 					exp.ds.getNumberOfClusters() + "",
-					exp.alLoader.getNumResults() + "", 0 + "", 0.0,
-					exp.algor2recall.get(algor), 0 + "");
+					exp.alLoader.getNumResults() + "",
+					exp.dsLoader.getSubtopicDissimilarityDistance() + "",
+					exp.algor2time.get(algor), exp.algor2recall.get(algor),
+					0 + "");
 			evalID++;
 			retVal.add(data);
 		}
 		return retVal;
 	}
 
-	private void createPropXML(String fileName) throws IOException {
+	private void createPropXML(String fileName, FACTOR factor, double value,
+			int evalID) throws IOException {
 		// Creating document
 		Document document = DocumentHelper.createDocument();
 		Element config = document.addElement("configuration");
+		Element numClusterEle = config.addElement("NumCluster");
+		numClusterEle.setText(String.valueOf(simuPara.getNumOfClusters()));
 
-		config.addElement("NumCluster").setText(
-				String.valueOf(simuPara.getNumOfClusters()));
+		Element relDifferenceEle = config.addElement("relevanceDifference");
+		double relDifferenceValue = 0.0;
+		relDifferenceEle.setText(String.valueOf(relDifferenceValue));
+
 		config.addElement("size").setText(
 				String.valueOf(simuPara.getSizeOfClusters()));
 		config.addElement("dimensionality").setText(
@@ -834,8 +855,27 @@ public class ConfigPart extends AbstractPart {
 
 		Element centgen = config.addElement("centgen");
 		centgen.addAttribute("name", advanceConfigPara.getCentgenName());
-		centgen.addElement("distance").setText(
-				String.valueOf(advanceConfigPara.getCentgenDistance()));
+		Element subtopicDissimilarityEle = centgen.addElement("distance");
+		subtopicDissimilarityEle.setText(String.valueOf(advanceConfigPara
+				.getCentgenDistance()));
+
+		switch (factor) {
+		case NumOfResults:
+			break;
+		case NumOfSubtopics:
+			numClusterEle.setText(String.valueOf((int) value));
+			break;
+		case Relevance_Difference:
+			relDifferenceValue = value;
+			relDifferenceEle.setText(String.valueOf(value));
+			break;
+		case Subtopic_Dissimilarity:
+			subtopicDissimilarityEle.setText(String.valueOf(value));
+			break;
+
+		default:
+			break;
+		}
 
 		Element clusters = config.addElement("clusters");
 		int n = simuPara.getNumOfClusters();
@@ -856,10 +896,18 @@ public class ConfigPart extends AbstractPart {
 						String.valueOf(advanceConfigPara.getMinCosine()));
 				break;
 			case Normal:
-				d.addElement("mean").setText(
-						String.valueOf(advanceConfigPara.getMeanNormal()));
-				d.addElement("std").setText(
-						String.valueOf(advanceConfigPara.getStdNormal()));
+				Double std = advanceConfigPara.getStdNormal();
+				Double mean = advanceConfigPara.getMeanNormal() + evalID
+						* relDifferenceValue;
+				if (mean > 0.9)
+					mean = 0.9;
+				if (factor == FACTOR.Relevance_Difference) {
+					if (value < std * 2.0) {
+						std = value / 2.0;
+					}
+				}
+				d.addElement("mean").setText(String.valueOf(mean));
+				d.addElement("std").setText(String.valueOf(std));
 				break;
 			case Powertail:
 				d.addElement("shape").setText(
@@ -889,12 +937,28 @@ public class ConfigPart extends AbstractPart {
 
 	}
 
-	private void createAlgorXML(String fileName) throws IOException {
+	private void createAlgorXML(String fileName, FACTOR factor, double value)
+			throws IOException {
 		// Creating document
 		Document document = DocumentHelper.createDocument();
 		Element config = document.addElement("configuration");
 
-		config.addElement("resultSize").setText("10");
+		Element resultSizeEle = config.addElement("resultSize");
+		resultSizeEle.setText("10");
+
+		switch (factor) {
+		case NumOfResults:
+			resultSizeEle.setText(String.valueOf((int) value));
+			break;
+		case NumOfSubtopics:
+			break;
+		case Relevance_Difference:
+			break;
+		case Subtopic_Dissimilarity:
+			break;
+		default:
+			break;
+		}
 
 		Element algorithms = config.addElement("algorithms");
 		Element ag = algorithms.addElement("algorithm");

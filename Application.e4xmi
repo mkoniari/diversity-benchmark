@@ -13,8 +13,8 @@
             <children xsi:type="basic:PartStack" xmi:id="_srAAcITbEeOIEtdKXcpHUg" elementId="diversitybenchmark.partstack.chart">
               <children xsi:type="basic:Part" xmi:id="_JOJQ0ITcEeOIEtdKXcpHUg" elementId="diversitybenchmark.part.4" toBeRendered="false" visible="false" label="Chart"/>
             </children>
-            <children xsi:type="basic:PartStack" xmi:id="_PZRWUITcEeOIEtdKXcpHUg" elementId="diversitybenchmark.partstack.2">
-              <children xsi:type="basic:Part" xmi:id="_PnTyUITcEeOIEtdKXcpHUg" elementId="diversitybenchmark.part.0" label="Data"/>
+            <children xsi:type="basic:PartStack" xmi:id="_PZRWUITcEeOIEtdKXcpHUg" elementId="diversitybenchmark.partstack.chart3D">
+              <children xsi:type="basic:Part" xmi:id="_PnTyUITcEeOIEtdKXcpHUg" elementId="diversitybenchmark.part.0" toBeRendered="false" visible="false" label="Chart3D"/>
             </children>
           </children>
         </children>

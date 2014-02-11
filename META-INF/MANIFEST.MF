@@ -35,4 +35,7 @@ Bundle-ClassPath: lib/dom4j-1.6.1.jar,
  lib/jfreechart-1.0.13-swt.jar,
  lib/jfreechart-1.0.13.jar,
  .,
- lib/benchmark_fat.jar
+ lib/benchmark_fat.jar,
+ lib/jzy3d-swt-0.9.1.jar,
+ lib/jzy3d-api-0.9.1.jar,
+ lib/jzy3d-jdt-core-0.9.1.jar
