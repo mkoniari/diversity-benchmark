@@ -834,7 +834,8 @@ public class ConfigPart extends AbstractPart {
 		Document document = DocumentHelper.createDocument();
 		Element config = document.addElement("configuration");
 		Element numClusterEle = config.addElement("NumCluster");
-		numClusterEle.setText(String.valueOf(simuPara.getNumOfClusters()));
+		int numOfCluster = simuPara.getNumOfClusters();
+		numClusterEle.setText(String.valueOf(numOfCluster));
 
 		Element relDifferenceEle = config.addElement("relevanceDifference");
 		double relDifferenceValue = 0.0;
@@ -863,7 +864,8 @@ public class ConfigPart extends AbstractPart {
 		case NumOfResults:
 			break;
 		case NumOfSubtopics:
-			numClusterEle.setText(String.valueOf((int) value));
+			numOfCluster = (int) value;
+			numClusterEle.setText(String.valueOf(numOfCluster));
 			break;
 		case Relevance_Difference:
 			relDifferenceValue = value;
@@ -878,13 +880,19 @@ public class ConfigPart extends AbstractPart {
 		}
 
 		Element clusters = config.addElement("clusters");
-		int n = simuPara.getNumOfClusters();
+		int n = numOfCluster;
 		int sizeCluster = simuPara.getSizeOfClusters() / n;
+		int remainSizeCluster = simuPara.getSizeOfClusters() % n;
 		for (int i = 0; i < n; i++) {
 			Element cluster = clusters.addElement("cluster");
 			cluster.addAttribute("dimensionality",
 					String.valueOf(simuPara.getDimensionality()));
-			cluster.addAttribute("size", String.valueOf(sizeCluster));
+			if (i == 0) {
+				cluster.addAttribute("size",
+						String.valueOf(sizeCluster + remainSizeCluster));
+			} else {
+				cluster.addAttribute("size", String.valueOf(sizeCluster));
+			}
 			Element d = cluster.addElement("distribution");
 			String distributionName = simuPara.getDistribution();
 			d.addAttribute("name", simuPara.getDistribution());
