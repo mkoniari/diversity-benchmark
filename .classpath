@@ -13,5 +13,8 @@
 	<classpathentry kind="lib" path="lib/jzy3d-swt-0.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/jzy3d-api-0.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/jzy3d-jdt-core-0.9.1.jar"/>
+	<classpathentry kind="lib" path="lib/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="lib/jogl-all.jar"/>
+	<classpathentry kind="lib" path="lib/gluegen.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
