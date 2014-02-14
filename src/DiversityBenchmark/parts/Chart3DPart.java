@@ -1,5 +1,10 @@
 package DiversityBenchmark.parts;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -18,6 +23,14 @@ import org.jzy3d.colors.Color;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.plot3d.primitives.Scatter;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
+
+import com.benchmark.data.DataCluster;
+import com.benchmark.data.DataObject;
+import com.benchmark.data.DataSet;
+import com.benchmark.generator.configuration.ConfigurationLoader;
+import com.benchmark.generator.configuration.DatasetConfigLoader;
+import com.benchmark.metrics.Distance;
+import com.benchmark.utility.Utilities;
 
 import DiversityBenchmark.handlers.EvaluateHandler;
 import DiversityBenchmark.models.MetricModel;
@@ -63,7 +76,18 @@ public class Chart3DPart {
 		// "newt");
 		chart.getAxeLayout().setMainColor(Color.WHITE);
 		chart.getView().setBackgroundColor(Color.BLACK);
-		scatter = testScatter();
+
+		// Load data and create scatter from file
+		String dataFile = "";
+		String resultFile = "";
+		String configFile = "";
+		ConfigurationLoader loader = new DatasetConfigLoader(configFile, false,
+				dataFile);
+		DataSet ds = loader.load(false);
+		Utilities.loadSelected(resultFile, ds);
+		scatter = generateScatter(ds);
+
+//		scatter = testScatter();
 		chart.getScene().add(scatter);
 
 		chart.getAxeLayout().setZAxeLabel("Relevance value");
@@ -75,6 +99,49 @@ public class Chart3DPart {
 		// Create a chart
 
 		return chart;
+
+	}
+
+	public Scatter generateScatter(DataSet ds) {
+		DataObject[] candidates = ds.getDataObjects();
+		Comparator<DataObject> cmp = new Comparator<DataObject>() {
+			@Override
+			public int compare(DataObject o1, DataObject o2) {
+				if (o2.getRelevant() > o1.getRelevant()) {
+					return 1;
+				}
+				if (o2.getRelevant() < o1.getRelevant()) {
+					return -1;
+				}
+				return 0;
+			}
+		};
+		Queue<DataObject> heap = new PriorityQueue<DataObject>(
+				candidates.length, cmp);
+		for (int i = 0; i < candidates.length; ++i) {
+			heap.add(candidates[i]);
+		}
+
+		Coord3d[] points = new Coord3d[ds.getSize()];
+		Color[] colors = new Color[ds.getSize()];
+		int count = 0;
+		for (int i = 0; i < ds.getNumberOfClusters(); i++) {
+			DataCluster cluster = ds.getClusters()[i];
+			int size = cluster.getSize();
+			for (int j = 0; j < size; ++j) {
+				DataObject o = cluster.getElement(j);
+				if (o.isSelected()) {
+					colors[count] = Color.RED;
+				} else {
+					colors[count] = Color.GREEN;
+				}
+				points[count++] = new Coord3d(o.getCoordinates().get(0), o
+						.getCoordinates().get(1), o.getRelevant());
+			}
+		}
+
+		Scatter scatter = new Scatter(points, colors);
+		return scatter;
 
 	}
 

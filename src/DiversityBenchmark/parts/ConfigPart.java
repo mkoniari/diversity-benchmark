@@ -78,6 +78,7 @@ import DiversityBenchmark.utils.EventConstants;
 import DiversityBenchmark.utils.NumericValidator;
 
 import com.benchmark.exp.ExpNumSubtopic;
+import com.benchmark.utility.Utilities;
 
 public class ConfigPart extends AbstractPart {
 
@@ -799,6 +800,12 @@ public class ConfigPart extends AbstractPart {
 		Scatter scatter = expRes.values().iterator().next().generateScatter();
 		chart3D.post(EventConstants.RESULT_UPDATE_UPDATED, scatter);
 		System.out.println("End Evaluting...");
+	}
+	
+	
+	private void storeResult(ExpNumSubtopic exp, String dataFile, String resultFile){
+		exp.ds.saveDataFile(dataFile);
+		Utilities.saveSelected(resultFile,exp.ds);
 	}
 
 	private void startSimulate() {
