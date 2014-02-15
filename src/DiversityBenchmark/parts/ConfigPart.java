@@ -801,7 +801,7 @@ public class ConfigPart extends AbstractPart {
 			exp.run();
 			List<Data> data = writeResults(exp, resFile);
 			datas.addAll(data);
-			System.out.println("thang ga: " + exp.ds.getSelected().size());
+//			System.out.println("thang ga: " + exp.ds.sgetSelected().size());
 
 			NumberFormat formatter = new DecimalFormat("#0.000");
 			String fv = formatter.format(value);

@@ -71,7 +71,8 @@ public class Chart3DPart {
 	private Chart createChart() throws IOException {
 		Map<String, ExpNumSubtopic> expRes = (Map<String, ExpNumSubtopic>) context
 				.get(Constant.EXP_RES);
-		scatter = generateScatter(expRes.get(curFactorValue).ds);
+		DataSet ds = expRes.get(curFactorValue).algor2ds.get(curAlgorithm);
+		scatter = generateScatter(ds);
 
 		// TODO Auto-generated method stub
 		// Chart chart = new Chart();
