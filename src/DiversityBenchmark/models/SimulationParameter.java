@@ -22,7 +22,7 @@ public class SimulationParameter extends AbstractModel {
 	private Map<String, String> list;
 
 	public SimulationParameter() {
-		init();
+		// init();
 		// initMap();
 	}
 

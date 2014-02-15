@@ -1,0 +1,39 @@
+[Dataset] 
+numOfClusters = 10
+sizeOfCluster = 500
+dimensionality = 2
+distribution = 0
+[Algorithms Parameter] 
+agWeight = 1.0
+grassHoperDamping = 0.85
+motleyTheta = 0.1
+swapUpperBound = 0.1
+msdLambda = 0.4
+mmrLambda = 0.8
+[Observer]
+observer = 0
+minObserverValue = 0.0
+maxObserverValue = 0.0
+step = 0.0
+[Algorithm]
+algorithms = MMR,MSD,Motley,Swap,GrassHopper,AG
+[Metrics]
+metrics = ComputationTime,NormalizedRelevance,SRecall
+[Advanced Cluster] 
+maxCosine = 0.8
+minCosine = 0.2
+meanNormal = 0.5
+stdNormal = 0.1
+shapeTail = 20.0
+maxTail = 0.7
+minTail = 0.3
+[Advanced Dataset] 
+maxClusterDistance = 1.0
+minClusterDistance = 0.1
+maxRadius = 0.2
+minRadius = 0.1
+[Advanced Cluster Generator] 
+centgenName = Circle
+centgenDistance = 0.2
+[Advanced Result] 
+numOfResults = 100

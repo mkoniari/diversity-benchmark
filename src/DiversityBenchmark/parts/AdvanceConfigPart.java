@@ -3,8 +3,6 @@ package DiversityBenchmark.parts;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -87,14 +85,20 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 	private Text textCentGenDistance;
 	private Combo combo;
 	private ComboViewer comboViewer;
-	private AdvanceDatasetParameter simuPara;
 
 	private DataBindingContext ctx;
 	private NumericValidator validator = null;
 	Map<Text, String> txtBindding = new HashMap<Text, String>();
 
-	@Inject
 	IEclipseContext context;
+
+	private Section sctnResult;
+
+	private Composite resultComposite;
+
+	private Label lblNumOfResult;
+
+	private Text textNumOfResults;
 
 	public AdvanceConfigPart(Shell parentShell) {
 		super(parentShell);
@@ -114,7 +118,6 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		simuPara = new AdvanceDatasetParameter();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		// layout.horizontalAlignment = GridData.FILL;
@@ -135,7 +138,8 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 	}
 
 	private void initValue() {
-		advanceConfig = new AdvanceDatasetParameter();
+		if (advanceConfig == null)
+			advanceConfig = new AdvanceDatasetParameter();
 	}
 
 	private void addParameterFormPart(final Composite parent) {
@@ -153,6 +157,35 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 		addClusterSection(parent);
 		addDatasetSection(parent);
 		addCentGenSection(parent);
+		addResultSection(parent);
+	}
+
+	private void addResultSection(Composite parent) {
+		sctnResult = toolkit.createSection(form.getBody(),
+				Section.CLIENT_INDENT | Section.TITLE_BAR);
+		// gd_workerSection.widthHint = 335;
+		sctnResult.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
+				1, 2));
+
+		sctnResult.setText("Result");
+
+		resultComposite = new Composite(sctnResult, SWT.NONE);
+		toolkit.adapt(resultComposite);
+		toolkit.paintBordersFor(resultComposite);
+		sctnResult.setClient(resultComposite);
+		GridLayout gl_resultComposite = new GridLayout(2, false);
+		gl_resultComposite.horizontalSpacing = 2;
+		resultComposite.setLayout(gl_resultComposite);
+
+		lblNumOfResult = new Label(resultComposite, SWT.NONE);
+		toolkit.adapt(lblNumOfResult, true, true);
+		lblNumOfResult.setText("No. Results");
+
+		textNumOfResults = new Text(resultComposite, SWT.BORDER);
+		textNumOfResults.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				false, 1, 1));
+		toolkit.adapt(textNumOfResults, true, true);
+
 	}
 
 	private void addClusterSection(Composite parent) {
@@ -369,7 +402,6 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 		textCentGenDistance.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
 				true, false, 1, 1));
 		toolkit.adapt(textCentGenDistance, true, true);
-		new Label(form.getBody(), SWT.NONE);
 
 	}
 
@@ -379,12 +411,12 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 		}
 		ctx = new DataBindingContext();
 
-		if (simuPara.getCentgenName() != null) {
+		if (advanceConfig.getCentgenName() != null) {
 			// int index = simuPara.getCentgenIndex();
 			// combo.select(index);
-			combo.setText(simuPara.getCentgenName());
+			combo.setText(advanceConfig.getCentgenName());
 		} else {
-			simuPara.setCentgenName(combo.getText());
+			advanceConfig.setCentgenName(combo.getText());
 		}
 
 		for (Text key : txtBindding.keySet()) {
@@ -392,7 +424,7 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 					.observe(key);
 			IObservableValue modelValue = BeanProperties.value(
 					AdvanceDatasetParameter.class, txtBindding.get(key))
-					.observe(simuPara);
+					.observe(advanceConfig);
 			if (validator == null) {
 				ctx.bindValue(widgetValue, modelValue);
 			} else {
@@ -524,5 +556,23 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 		txtBindding.put(textShapeTail, "shapeTail");
 		txtBindding.put(textMaxTail, "maxTail");
 		txtBindding.put(textMinTail, "minTail");
+		txtBindding.put(textNumOfResults, "numOfResults");
 	}
+
+	public IEclipseContext getContext() {
+		return context;
+	}
+
+	public void setContext(IEclipseContext context) {
+		this.context = context;
+	}
+
+	public AdvanceDatasetParameter getAdvanceConfig() {
+		return advanceConfig;
+	}
+
+	public void setAdvanceConfig(AdvanceDatasetParameter advanceConfig) {
+		this.advanceConfig = advanceConfig;
+	}
+
 }

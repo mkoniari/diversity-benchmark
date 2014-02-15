@@ -7,7 +7,7 @@ public class AdvanceDatasetParameter extends AbstractModel {
 	private Double minClusterDistance;
 	private Double maxRadius;
 	private Double minRadius;
-
+	private Integer numOfResults;
 	private Double maxCosine;
 	private Double minCosine;
 	private Double meanNormal;
@@ -24,7 +24,7 @@ public class AdvanceDatasetParameter extends AbstractModel {
 		minClusterDistance = new Double(0.1);
 		maxRadius = new Double(0.25);
 		minRadius = new Double(0.25);
-
+		numOfResults = new Integer(100);
 		maxCosine = new Double(1.0);
 		minCosine = new Double(0);
 		meanNormal = new Double(0.5);
@@ -153,4 +153,14 @@ public class AdvanceDatasetParameter extends AbstractModel {
 		propertyChangeSupport.firePropertyChange("centgenDistance",
 				this.centgenDistance, this.centgenDistance = centgenDistance);
 	}
+
+	public Integer getNumOfResults() {
+		return numOfResults;
+	}
+
+	public void setNumOfResults(Integer numOfResults) {
+		propertyChangeSupport.firePropertyChange("numOfResults",
+				this.numOfResults, this.numOfResults = numOfResults);
+	}
+
 }

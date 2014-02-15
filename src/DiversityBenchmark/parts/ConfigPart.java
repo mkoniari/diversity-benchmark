@@ -1,5 +1,6 @@
 package DiversityBenchmark.parts;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -71,6 +72,7 @@ import DiversityBenchmark.models.Data;
 import DiversityBenchmark.models.Metric;
 import DiversityBenchmark.models.MetricModel;
 import DiversityBenchmark.models.SimulationParameter;
+import DiversityBenchmark.utils.ConfigReader;
 import DiversityBenchmark.utils.Constant;
 import DiversityBenchmark.utils.Constant.ALGORITHM;
 import DiversityBenchmark.utils.Constant.DISTRIBUTION;
@@ -158,7 +160,7 @@ public class ConfigPart extends AbstractPart {
 	@Inject
 	IEventBroker broker;
 	private Label lblDimentionality;
-	private Text textDimensionality;
+	private Text txtDimensionality;
 
 	/**
 	 * * This is a callback that will allow us to create the viewer and
@@ -229,7 +231,7 @@ public class ConfigPart extends AbstractPart {
 	private void generateSimuParamBinding() {
 		txtBindding.put(txtNumOfClusters, "numOfClusters");
 		txtBindding.put(txtSizeOfClusters, "sizeOfClusters");
-		txtBindding.put(textDimensionality, "dimensionality");
+		txtBindding.put(txtDimensionality, "dimensionality");
 		txtBindding.put(txtAGWeight, "agWeight");
 		txtBindding.put(txtGrassHopperDamping, "grassHopperDamping");
 		txtBindding.put(txtMotleyTheta, "motleyTheta");
@@ -466,8 +468,11 @@ public class ConfigPart extends AbstractPart {
 			public void handleEvent(Event event) {
 				AdvanceConfigPart dialog = new AdvanceConfigPart(parent
 						.getShell());
+				dialog.setContext(context);
+				dialog.setAdvanceConfig(advanceConfigPara);
 				dialog.create();
 				if (dialog.open() == Window.OK) {
+
 					System.out.println("Open advanced config");
 				}
 			}
@@ -475,14 +480,192 @@ public class ConfigPart extends AbstractPart {
 
 	}
 
-	protected void saveConfig(String path) {
-		// TODO Auto-generated method stub
+	protected String saveConfig(String filename) {
+		File outfile = new File(filename);
+		try {
+
+			/*
+			 * if (!(new File(outfile.getParent()).exists())) { (new
+			 * File(outfile.getParent())).mkdirs(); }
+			 */
+			BufferedWriter bw = new BufferedWriter(new FileWriter(outfile));
+			Integer numOfClusters = getValue(simuPara.getNumOfClusters());
+			Integer sizeOfCluster = getValue(simuPara.getSizeOfClusters());
+			Integer dimentionality = getValue(simuPara.getDimensionality());
+
+			bw.write("[Dataset] \n" + "numOfClusters = " + numOfClusters + "\n"
+					+ "sizeOfCluster = " + sizeOfCluster + "\n"
+					+ "dimensionality = " + dimentionality + "\n"
+					+ "distribution = " + distributionCombo.getSelectionIndex()
+					+ "\n");
+
+			bw.write("[Algorithms Parameter] \n" + "agWeight = "
+					+ getValue(simuPara.getAgWeight()) + "\n"
+					+ "grassHoperDamping = "
+					+ getValue(simuPara.getGrassHopperDamping()) + "\n"
+					+ "motleyTheta = " + getValue(simuPara.getMotleyTheta())
+					+ "\n" + "swapUpperBound = "
+					+ getValue(simuPara.getSwapUpperBound()) + "\n"
+					+ "msdLambda = " + getValue(simuPara.getMsdLambda()) + "\n"
+					+ "mmrLambda = " + getValue(simuPara.getMmrLambda()) + "\n");
+			bw.write("[Observer]\n" + "observer = "
+					+ getValue(combo.getSelectionIndex()) + "\n"
+					+ "minObserverValue = "
+					+ getValue(simuPara.getMinObserverValue()) + "\n"
+					+ "maxObserverValue = "
+					+ getValue(simuPara.getMaxObserverValue()) + "\n"
+					+ "step = " + getValue(simuPara.getStepObserverValue())
+					+ "\n");
+			String algorithms = "algorithms = ";
+			Object[] algos = algorithmTableViewer.getCheckedElements();
+			if (algos.length != 0) {
+				algorithms += ((Algorithm) algos[0]).getName();
+				for (int i = 1; i < algos.length; i++) {
+					algorithms += "," + ((Algorithm) algos[i]).getName();
+				}
+			}
+			algorithms += "\n";
+
+			bw.write("[Algorithm]\n" + algorithms);
+
+			String metricsContent = "metrics = ";
+			Object[] metrics = metricTableViewer.getCheckedElements();
+			if (metrics.length != 0) {
+				metricsContent += ((Metric) metrics[0]).getName();
+				for (int i = 1; i < metrics.length; i++) {
+					metricsContent += "," + ((Metric) metrics[i]).getName();
+				}
+			}
+			metricsContent += "\n";
+
+			bw.write("[Metrics]\n" + metricsContent);
+
+			bw.write("[Advanced Cluster] \n" + "maxCosine = "
+					+ getValue(advanceConfigPara.getMaxCosine()) + "\n"
+					+ "minCosine = "
+					+ getValue(advanceConfigPara.getMinCosine()) + "\n"
+					+ "meanNormal = "
+					+ getValue(advanceConfigPara.getMeanNormal()) + "\n"
+					+ "stdNormal = "
+					+ getValue(advanceConfigPara.getStdNormal()) + "\n"
+					+ "shapeTail = "
+					+ getValue(advanceConfigPara.getShapeTail()) + "\n"
+					+ "maxTail = " + getValue(advanceConfigPara.getMaxTail())
+					+ "\n" + "minTail = "
+					+ getValue(advanceConfigPara.getMinTail()) + "\n");
+
+			bw.write("[Advanced Dataset] \n" + "maxClusterDistance = "
+					+ getValue(advanceConfigPara.getMaxClusterDistance())
+					+ "\n" + "minClusterDistance = "
+					+ getValue(advanceConfigPara.getMinClusterDistance())
+					+ "\n" + "maxRadius = "
+					+ getValue(advanceConfigPara.getMaxRadius()) + "\n"
+					+ "minRadius = "
+					+ getValue(advanceConfigPara.getMinRadius()) + "\n");
+
+			bw.write("[Advanced Cluster Generator] \n" + "centgenName = "
+					+ advanceConfigPara.getCentgenName() + "\n"
+					+ "centgenDistance = "
+					+ getValue(advanceConfigPara.getCentgenDistance()) + "\n");
+
+			bw.write("[Advanced Result] \n" + "numOfResults = "
+					+ advanceConfigPara.getNumOfResults() + "\n");
+
+			bw.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return outfile.getAbsolutePath();
 
 	}
 
-	protected void loadConfig(String path) {
-		// TODO Auto-generated method stub
+	public static Integer getValue(Integer i) {
+		return i != null ? i : 0;
+	}
 
+	public static Double getValue(Double i) {
+		return i != null ? i : 0;
+	}
+
+	protected void loadConfig(String filename) {
+		ConfigReader reader = new ConfigReader();
+		reader.readfile(filename);
+		Map<String, String> list = reader.getConfig();
+		txtNumOfClusters.setText(list.get("numOfClusters"));
+		txtSizeOfClusters.setText(list.get("sizeOfCluster"));
+		txtDimensionality.setText(list.get("dimensionality"));
+		txtAGWeight.setText(list.get("agWeight"));
+		txtGrassHopperDamping.setText(list.get("grassHoperDamping"));
+		txtMotleyTheta.setText(list.get("motleyTheta"));
+		txtSwapUpperBound.setText(list.get("swapUpperBound"));
+		txtMSDLambda.setText(list.get("msdLambda"));
+		txtMMRLambda.setText(list.get("mmrLambda"));
+
+		distributionCombo.select(Integer.parseInt(list.get("distribution")));
+		combo.select(Integer.parseInt(list.get("observer")));
+		txtMinvalue.setText(list.get("minObserverValue"));
+		txtMaxvalue.setText(list.get("maxObserverValue"));
+		txtStep.setText(list.get("step"));
+
+		String[] algos = list.get("algorithms").split(",");
+		algorithmTableViewer.setAllChecked(true);
+		Object[] algorithms = algorithmTableViewer.getCheckedElements();
+		algorithmTableViewer.setAllChecked(false);
+		selectedAlgorithm.getAlgorithms().clear();
+		for (int i = 0; i < algos.length; i++) {
+			String name = algos[i];
+			for (Object one_algo : algorithms) {
+				if (((Algorithm) one_algo).getName().equals(name)) {
+					algorithmTableViewer.setChecked(one_algo, true);
+					selectedAlgorithm.getAlgorithms().add((Algorithm) one_algo);
+				}
+			}
+		}
+
+		String[] metricsContent = list.get("metrics").split(",");
+		metricTableViewer.setAllChecked(true);
+		Object[] metrics = metricTableViewer.getCheckedElements();
+		metricTableViewer.setAllChecked(false);
+		selectedMetric.getMetrics().clear();
+		for (int i = 0; i < metricsContent.length; i++) {
+			String name = metricsContent[i];
+
+			for (Object one_metric : metrics) {
+				if (((Metric) one_metric).getName().equals(name)) {
+					metricTableViewer.setChecked(one_metric, true);
+					selectedMetric.getMetrics().add((Metric) one_metric);
+				}
+			}
+		}
+
+		advanceConfigPara
+				.setMaxCosine(Double.parseDouble(list.get("maxCosine")));
+		advanceConfigPara
+				.setMinCosine(Double.parseDouble(list.get("minCosine")));
+		advanceConfigPara.setMeanNormal(Double.parseDouble(list
+				.get("meanNormal")));
+		advanceConfigPara
+				.setStdNormal(Double.parseDouble(list.get("stdNormal")));
+		advanceConfigPara
+				.setShapeTail(Double.parseDouble(list.get("shapeTail")));
+		advanceConfigPara.setMaxTail(Double.parseDouble(list.get("maxTail")));
+		advanceConfigPara.setMinTail(Double.parseDouble(list.get("minTail")));
+
+		advanceConfigPara.setMaxClusterDistance(Double.parseDouble(list
+				.get("maxClusterDistance")));
+		advanceConfigPara.setMinClusterDistance(Double.parseDouble(list
+				.get("minClusterDistance")));
+		advanceConfigPara
+				.setMaxRadius(Double.parseDouble(list.get("maxRadius")));
+		advanceConfigPara
+				.setMinRadius(Double.parseDouble(list.get("minRadius")));
+
+		advanceConfigPara.setCentgenName(list.get("centgenName"));
+		advanceConfigPara.setCentgenDistance(Double.parseDouble(list
+				.get("centgenDistance")));
+		advanceConfigPara.setNumOfResults(Integer.parseInt(list
+				.get("numOfResults")));
 	}
 
 	private void addMetricSection(Composite parent) {
@@ -615,10 +798,10 @@ public class ConfigPart extends AbstractPart {
 		toolkit.adapt(lblDimentionality, true, true);
 		lblDimentionality.setText("Dimentionality");
 
-		textDimensionality = new Text(clusterSectionBody, SWT.BORDER);
-		textDimensionality.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
+		txtDimensionality = new Text(clusterSectionBody, SWT.BORDER);
+		txtDimensionality.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
 				true, false, 1, 1));
-		toolkit.adapt(textDimensionality, true, true);
+		toolkit.adapt(txtDimensionality, true, true);
 
 		Label lblDistribution = new Label(parent, SWT.NONE);
 		lblDistribution.setText("Distribution");
@@ -989,7 +1172,7 @@ public class ConfigPart extends AbstractPart {
 		Element config = document.addElement("configuration");
 
 		Element resultSizeEle = config.addElement("resultSize");
-		resultSizeEle.setText("10");
+		resultSizeEle.setText("100");
 
 		switch (factor) {
 		case NumOfResults:
