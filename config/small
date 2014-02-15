@@ -1,0 +1,34 @@
+[Dataset]
+NumClusters = 5
+Size = 500
+Dimensionality = 2
+Distribution = Normal
+NumResult = 100
+[ClusterGenerator]
+Shape = Line
+Distance = 0.5
+[AlgorithmParameters]
+NumResult = 100
+AGWeight = 1.0
+GrassHopperDamping = 0.85
+MotleyTheta = 0.1
+SwapUB = 0.1
+MSDLambda = 0.4
+MMRLambda = 0.8
+[Distribution]
+Mean = 0.5
+Std = 0.1
+CosMax = 0.8
+CosMin = 0.2
+PowerTailShape = 20
+PowerTailMax = 0.7
+PowerTailMin = 0.3
+[AdvancedDataset]
+MaxClusterDistance = 1
+MinClusterDistance = 0.1
+MaxRadius = 0.2
+MinRadius = 0.1
+[Algorithm]
+algorithms = MMR,MSD,Swap,Motley,AG,GrassHopper
+[Metrics]
+metrics = NormalizedRelevance,TopicRecall,ComputationTime
