@@ -35,6 +35,8 @@ public class EvaluateHandler {
 
 	private Set<String> existing3DPart = new HashSet<String>();
 	private Set<String> new3DPart = new HashSet<String>();
+	EPartService partService;
+	IEclipseContext context;
 
 	// @Execute
 	// public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell) {
@@ -47,7 +49,8 @@ public class EvaluateHandler {
 	@Execute
 	public void execute(EPartService partService, MApplication application,
 			EModelService modelService, IEclipseContext context) {
-
+		this.partService = partService;
+		this.context = context;
 		// Request update metric to context
 		eval_start.send(EventConstants.METRIC_OBSERVER_UPDATE_UPDATED, "start");
 		String partStackURI = "diversitybenchmark.partstack.chart";
@@ -56,18 +59,60 @@ public class EvaluateHandler {
 		genChartPart(partService, application, modelService, context,
 				partStackURI, chartPartURI, chartPartClass);
 
-		String part3DStackURI = "diversitybenchmark.partstack.chart3D";
-		String chart3DPartURI = "diversitybenchmark.part.chart3Dview.";
-		String chart3DPartClass = "bundleclass://DiversityBenchmark/DiversityBenchmark.parts.Chart3DPart";
-		genChart3DPart(partService, application, modelService, context,
-				part3DStackURI, chart3DPartURI, chart3DPartClass);
+		// String part3DStackURI = "diversitybenchmark.partstack.chart3D";
+		// String chart3DPartURI = "diversitybenchmark.part.chart3Dview.";
+		// String chart3DPartClass =
+		// "bundleclass://DiversityBenchmark/DiversityBenchmark.parts.Chart3DPart";
+		// genChart3DPart(partService, application, modelService, context,
+		// part3DStackURI, chart3DPartURI, chart3DPartClass);
 
 		// Add your Java objects to the context
 		// context.set(MyDataObject.class.getName(), data);
 		// context.set(MoreStuff.class, moreData);
 
 		eval_start.send(EventConstants.FUNCTION_SIMULATING_START, "start");
+
+		// Object expRes = context.get(Constant.EXP_RES);
+
+		MPart configchart3DPart = partService
+				.findPart("diversitybenchmark.part.chart3dcontrol");
+
+		// hide the part
+		// partService.hidePart(configchart3DPart);
+
+		// required if initial not visible
+		configchart3DPart.setVisible(true);
+
+		// set context to this part
+		configchart3DPart.setContext(context);
+
+		// show the part
+		partService.showPart(configchart3DPart, PartState.VISIBLE);
+
 	}
+
+	// @SuppressWarnings("restriction")
+	// @Inject
+	// @Optional
+	// void evaluateHandler(
+	// @UIEventTopic(EventConstants.FUNCTION_SIMULATING_FINISHED) String s) {
+	// Object expRes = context.get(Constant.EXP_RES);
+	//
+	// MPart configchart3DPart = partService
+	// .findPart("diversitybenchmark.part.chart3dcontrol");
+	//
+	// // hide the part
+	// // partService.hidePart(configchart3DPart);
+	//
+	// // required if initial not visible
+	// configchart3DPart.setVisible(true);
+	//
+	// // set context to this part
+	// configchart3DPart.setContext(context);
+	//
+	// // show the part
+	// partService.showPart(configchart3DPart, PartState.VISIBLE);
+	// }
 
 	private void genChart3DPart(EPartService partService,
 			MApplication application, EModelService modelService,
@@ -99,7 +144,8 @@ public class EvaluateHandler {
 					MetricModel selectedMetric = new MetricModel();
 					selectedMetric.getMetrics().clear();
 					selectedMetric.getMetrics().add(metric);
-					context.modify(Constant.METRIC, selectedMetric);
+					ContextUtil.updateContext(context,
+							Constant.SELECTED_METRIC, selectedMetric);
 
 					MPart part = MBasicFactory.INSTANCE.createPart();
 					part.setElementId(chartPartURI + partID);
@@ -151,7 +197,8 @@ public class EvaluateHandler {
 					MetricModel selectedMetric = new MetricModel();
 					selectedMetric.getMetrics().clear();
 					selectedMetric.getMetrics().add(metric);
-					context.modify(Constant.METRIC, selectedMetric);
+					ContextUtil.updateContext(context,
+							Constant.SELECTED_METRIC, selectedMetric);
 
 					MPart part = MBasicFactory.INSTANCE.createPart();
 					part.setElementId(chartPartURI + partID);
@@ -185,8 +232,8 @@ public class EvaluateHandler {
 		}
 	}
 
-	public static String genPartID(String curAlgorithm, String curFactor) {
-		return curAlgorithm.toLowerCase() + "_" + curFactor.toLowerCase();
-	}
+	// public static String genPartID(String curAlgorithm, String curFactor) {
+	// return curAlgorithm.toLowerCase() + "_" + curFactor.toLowerCase();
+	// }
 
 }

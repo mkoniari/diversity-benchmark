@@ -3,10 +3,14 @@ package DiversityBenchmark.parts;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -61,7 +65,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.jzy3d.plot3d.primitives.Scatter;
 
 import DiversityBenchmark.models.AdvanceDatasetParameter;
 import DiversityBenchmark.models.Algorithm;
@@ -701,12 +704,18 @@ public class ConfigPart extends AbstractPart {
 	void updateMetricHandler(
 			@UIEventTopic(EventConstants.METRIC_OBSERVER_UPDATE_UPDATED) String s) {
 		// start simulate
-		System.out.println("Update metrics to context");
+		System.out.println("Update metrics to context: " + selectedMetric);
 		ContextUtil.updateContext(context, Constant.METRIC, selectedMetric);
 
-		System.out.println("Update observer to context");
+		System.out.println("Update observer to context: "
+				+ observerValues[index]);
 		ContextUtil.updateContext(context, Constant.FACTOR,
 				FACTOR.valueOf(observerValues[index]));
+
+		System.out
+				.println("Update algorithms to context: " + selectedAlgorithm);
+		ContextUtil.updateContext(context, Constant.ALGORITHM,
+				selectedAlgorithm);
 
 	}
 
@@ -714,10 +723,10 @@ public class ConfigPart extends AbstractPart {
 	@Optional
 	void evaluateHandler(
 			@UIEventTopic(EventConstants.FUNCTION_SIMULATING_START) String s) {
-		System.out.println("Start Evaluating...");
+		// System.out.println("Start Evaluating...");
 		startEvaluating();
 		// System.out.println(selectedAlgorithm.toString());
-		System.out.println("End Evaluating");
+		// System.out.println("End Evaluating");
 	}
 
 	private void startEvaluating() {
@@ -738,6 +747,7 @@ public class ConfigPart extends AbstractPart {
 
 	}
 
+	@SuppressWarnings("restriction")
 	@Inject
 	@Optional
 	void updateHandler(
@@ -762,7 +772,8 @@ public class ConfigPart extends AbstractPart {
 		int evalID = 0;
 		System.out.println("Start Evaluating...");
 		List<Data> datas = new ArrayList<Data>();
-		Map<Double, ExpNumSubtopic> expRes = new HashMap<>();
+		Map<String, ExpNumSubtopic> expRes = new HashMap<>();
+		Set<String> factorValues = new HashSet<>();
 		while (start <= maxValue) {
 
 			double value = start;
@@ -790,22 +801,31 @@ public class ConfigPart extends AbstractPart {
 			exp.run();
 			List<Data> data = writeResults(exp, resFile);
 			datas.addAll(data);
+			System.out.println("thang ga: " + exp.ds.getSelected().size());
 
-			expRes.put(start, exp);
+			NumberFormat formatter = new DecimalFormat("#0.000");
+			String fv = formatter.format(value);
+			factorValues.add(fv);
+			expRes.put(fv, exp);
 
 			start += step;
 			evalID++;
 		}
 		chart.post(EventConstants.RESULT_UPDATE_UPDATED, datas);
-		Scatter scatter = expRes.values().iterator().next().generateScatter();
-		chart3D.post(EventConstants.RESULT_UPDATE_UPDATED, scatter);
-		System.out.println("End Evaluting...");
+		// Scatter scatter =
+		// expRes.values().iterator().next().generateScatter();
+		// chart3D.post(EventConstants.RESULT_UPDATE_UPDATED, scatter);
+		context.set(Constant.EXP_RES, expRes);
+		context.set(Constant.FACTOR_VALUES, factorValues);
+		System.out.println("End Evaluting!");
+		// eval_start
+		// .send(EventConstants.FUNCTION_SIMULATING_FINISHED, "finished");
 	}
-	
-	
-	private void storeResult(ExpNumSubtopic exp, String dataFile, String resultFile){
+
+	private void storeResult(ExpNumSubtopic exp, String dataFile,
+			String resultFile) {
 		exp.ds.saveDataFile(dataFile);
-		Utilities.saveSelected(resultFile,exp.ds);
+		Utilities.saveSelected(resultFile, exp.ds);
 	}
 
 	private void startSimulate() {

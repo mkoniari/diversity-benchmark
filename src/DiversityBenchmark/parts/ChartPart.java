@@ -69,7 +69,7 @@ public class ChartPart {
 	}
 
 	private void initChartInfo() {
-		Object metrics = context.get(Constant.METRIC);
+		Object metrics = context.get(Constant.SELECTED_METRIC);
 		if (metrics != null && metrics instanceof MetricModel) {
 			MetricModel tmp = (MetricModel) metrics;
 

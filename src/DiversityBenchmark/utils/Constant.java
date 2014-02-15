@@ -17,12 +17,18 @@ public class Constant {
 	public static final String COMPLETETION_VS_ANSWER_PER_QUESTION = "Completion vs. Answers per Question ";
 
 	public static final String METRIC = "metric";
+	public static final String SELECTED_METRIC = "selected_metric";
+	public static final String ALGORITHM = "algorithm";
+	public static final String SELECTED_ALGORITHM = "selected_algorithm";
 	public static final String EXISTINGPART = "existingPart";
 	public static final String NEWPART = "newPart";
 	public static final String EXISTING3DPART = "existing3DPart";
 	public static final String NEW3DPART = "new3DPart";
 	public static final String FACTOR = "observer";
+	public static final String FACTOR_VALUE = "observer_value";
+	public static final String FACTOR_VALUES = "observer_values";
 	public static final String ADVANCED_PARA = "advancedPara";
+	public static final String EXP_RES = "exp_res";
 
 	public static final String SELECTALL = "Select All";
 

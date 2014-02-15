@@ -40,5 +40,4 @@ Bundle-ClassPath: lib/dom4j-1.6.1.jar,
  lib/jzy3d-api-0.9.1.jar,
  lib/jzy3d-jdt-core-0.9.1.jar,
  lib/gluegen-rt.jar,
- lib/jogl-all.jar,
- lib/gluegen.jar
+ lib/jogl-all.jar
