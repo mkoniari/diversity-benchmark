@@ -130,7 +130,7 @@ public class Chart3DConfigPart extends AbstractPart {
 		List<MPartStack> stacks = modelService.findElements(application,
 				part3dStackURI, MPartStack.class, null);
 
-		Object o = context.get(Constant.ALGORITHM);
+		Object o = context.get(Constant.ALGORITHM_NAME);
 		assert o != null;
 
 		Object o1 = context.get(Constant.FACTOR);
@@ -251,7 +251,8 @@ public class Chart3DConfigPart extends AbstractPart {
 		Algorithm selectAll = new Algorithm();
 		selectAll.setName(Constant.SELECTALL);
 		algorithmTableViewer.add(selectAll);
-		selectedAlgorithm = (AlgorithmModel) context.get(Constant.ALGORITHM);
+		selectedAlgorithm = (AlgorithmModel) context
+				.get(Constant.ALGORITHM_NAME);
 		for (Algorithm algo : selectedAlgorithm.getAlgorithms()) {
 			algorithmTableViewer.add(algo);
 		}
@@ -325,8 +326,12 @@ public class Chart3DConfigPart extends AbstractPart {
 				if (Constant.SELECTALL.equalsIgnoreCase(ele.toString())) {
 					if (checked) {
 						checkboxTableViewer.setAllChecked(true);
-					} else
+						// System.out.println(selectedAlgorithm);
+					} else {
 						checkboxTableViewer.setAllChecked(false);
+						// System.out.println(selectedAlgorithm);
+					}
+
 				}
 			}
 		});

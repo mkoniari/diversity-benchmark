@@ -222,7 +222,7 @@ public class ChartPart {
 					dataset.setValue(d.getNormalizedRelevance(),
 							d.getAlgorithm(), d.getNumOfResults());
 					break;
-				case NumOfSubtopics:
+				case NumOfTopics:
 					dataset.setValue(d.getNormalizedRelevance(),
 							d.getAlgorithm(), d.getNumberOfSubtopics());
 					break;
@@ -230,7 +230,7 @@ public class ChartPart {
 					dataset.setValue(d.getNormalizedRelevance(),
 							d.getAlgorithm(), d.getRelevanceDifference());
 					break;
-				case Subtopic_Dissimilarity:
+				case Topic_Dissimilarity:
 					dataset.setValue(d.getNormalizedRelevance(),
 							d.getAlgorithm(), d.getSubtopicDissimilarity());
 					break;
@@ -255,7 +255,7 @@ public class ChartPart {
 					dataset.setValue(d.getSrecall(), d.getAlgorithm(),
 							d.getNumOfResults());
 					break;
-				case NumOfSubtopics:
+				case NumOfTopics:
 					dataset.setValue(d.getSrecall(), d.getAlgorithm(),
 							d.getNumberOfSubtopics());
 					break;
@@ -263,7 +263,7 @@ public class ChartPart {
 					dataset.setValue(d.getSrecall(), d.getAlgorithm(),
 							d.getRelevanceDifference());
 					break;
-				case Subtopic_Dissimilarity:
+				case Topic_Dissimilarity:
 					dataset.setValue(d.getSrecall(), d.getAlgorithm(),
 							d.getSubtopicDissimilarity());
 					break;
@@ -279,7 +279,7 @@ public class ChartPart {
 					dataset.setValue(d.getTime(), d.getAlgorithm(),
 							d.getNumOfResults());
 					break;
-				case NumOfSubtopics:
+				case NumOfTopics:
 					dataset.setValue(d.getTime(), d.getAlgorithm(),
 							d.getNumberOfSubtopics());
 					break;
@@ -287,7 +287,7 @@ public class ChartPart {
 					dataset.setValue(d.getTime(), d.getAlgorithm(),
 							d.getRelevanceDifference());
 					break;
-				case Subtopic_Dissimilarity:
+				case Topic_Dissimilarity:
 					dataset.setValue(d.getTime(), d.getAlgorithm(),
 							d.getSubtopicDissimilarity());
 					break;

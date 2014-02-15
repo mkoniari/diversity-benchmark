@@ -18,7 +18,7 @@ public class Constant {
 
 	public static final String METRIC = "metric";
 	public static final String SELECTED_METRIC = "selected_metric";
-	public static final String ALGORITHM = "algorithm";
+	public static final String ALGORITHM_NAME = "algorithm";
 	public static final String SELECTED_ALGORITHM = "selected_algorithm";
 	public static final String EXISTINGPART = "existingPart";
 	public static final String NEWPART = "newPart";
@@ -47,7 +47,7 @@ public class Constant {
 	};
 
 	public static enum FACTOR {
-		NumOfSubtopics, Relevance_Difference, NumOfResults, Subtopic_Dissimilarity
+		NumOfTopics, Relevance_Difference, NumOfResults, Topic_Dissimilarity
 	};
 
 	public static enum CENTGEN {

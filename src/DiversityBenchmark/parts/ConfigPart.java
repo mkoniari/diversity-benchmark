@@ -74,6 +74,7 @@ import DiversityBenchmark.models.Metric;
 import DiversityBenchmark.models.MetricModel;
 import DiversityBenchmark.models.SimulationParameter;
 import DiversityBenchmark.utils.Constant;
+import DiversityBenchmark.utils.Constant.ALGORITHM;
 import DiversityBenchmark.utils.Constant.DISTRIBUTION;
 import DiversityBenchmark.utils.Constant.FACTOR;
 import DiversityBenchmark.utils.ContextUtil;
@@ -104,10 +105,10 @@ public class ConfigPart extends AbstractPart {
 	private AdvanceDatasetParameter advanceConfigPara;
 
 	final String[] observerValues = new String[] {
-			FACTOR.NumOfSubtopics.toString(),
+			FACTOR.NumOfTopics.toString(),
 			FACTOR.Relevance_Difference.toString(),
 			FACTOR.NumOfResults.toString(),
-			FACTOR.Subtopic_Dissimilarity.toString() };
+			FACTOR.Topic_Dissimilarity.toString() };
 
 	final String[] distributionValues = new String[] {
 			DISTRIBUTION.Normal.toString(), DISTRIBUTION.Cosine.toString(),
@@ -675,8 +676,19 @@ public class ConfigPart extends AbstractPart {
 				if (Constant.SELECTALL.equalsIgnoreCase(ele.toString())) {
 					if (checked) {
 						checkboxTableViewer.setAllChecked(true);
-					} else
+						// System.out.println(checkboxTableViewer
+						// .getCheckedElements().toString());
+						// System.out.println(selectedAlgorithm);
+					} else {
 						checkboxTableViewer.setAllChecked(false);
+						// System.out.println(checkboxTableViewer
+						// .getCheckedElements());
+						// System.out.println(selectedAlgorithm);
+					}
+				} else {
+					// System.out.println(checkboxTableViewer.getCheckedElements()
+					// .toString());
+					// System.out.println(selectedAlgorithm);
 				}
 			}
 		});
@@ -714,7 +726,7 @@ public class ConfigPart extends AbstractPart {
 
 		System.out
 				.println("Update algorithms to context: " + selectedAlgorithm);
-		ContextUtil.updateContext(context, Constant.ALGORITHM,
+		ContextUtil.updateContext(context, Constant.ALGORITHM_NAME,
 				selectedAlgorithm);
 
 	}
@@ -801,7 +813,7 @@ public class ConfigPart extends AbstractPart {
 			exp.run();
 			List<Data> data = writeResults(exp, resFile);
 			datas.addAll(data);
-			System.out.println("thang ga: " + exp.ds.getSelected().size());
+			// System.out.println("thang ga: " + exp.ds.getSelected().size());
 
 			NumberFormat formatter = new DecimalFormat("#0.000");
 			String fv = formatter.format(value);
@@ -890,7 +902,7 @@ public class ConfigPart extends AbstractPart {
 		switch (factor) {
 		case NumOfResults:
 			break;
-		case NumOfSubtopics:
+		case NumOfTopics:
 			numOfCluster = (int) value;
 			numClusterEle.setText(String.valueOf(numOfCluster));
 			break;
@@ -898,7 +910,7 @@ public class ConfigPart extends AbstractPart {
 			relDifferenceValue = value;
 			relDifferenceEle.setText(String.valueOf(value));
 			break;
-		case Subtopic_Dissimilarity:
+		case Topic_Dissimilarity:
 			subtopicDissimilarityEle.setText(String.valueOf(value));
 			break;
 
@@ -985,48 +997,63 @@ public class ConfigPart extends AbstractPart {
 		case NumOfResults:
 			resultSizeEle.setText(String.valueOf((int) value));
 			break;
-		case NumOfSubtopics:
+		case NumOfTopics:
 			break;
 		case Relevance_Difference:
 			break;
-		case Subtopic_Dissimilarity:
+		case Topic_Dissimilarity:
 			break;
 		default:
 			break;
 		}
 
 		Element algorithms = config.addElement("algorithms");
-		Element ag = algorithms.addElement("algorithm");
-		ag.addAttribute("name", "AG");
-		ag.addElement("lambda").setText("0.4");
-		ag.addElement("damping").setText("0.85");
-		ag.addElement("weightThreshold").setText(
-				String.valueOf(simuPara.getAgWeight()));
 
-		Element mmr = algorithms.addElement("algorithm");
-		mmr.addAttribute("name", "MMR");
-		mmr.addElement("lambda").setText(
-				String.valueOf(simuPara.getMmrLambda()));
+		for (Algorithm a : selectedAlgorithm.getAlgorithms()) {
+			switch (ALGORITHM.valueOf(a.getName())) {
+			case AG:
+				Element ag = algorithms.addElement("algorithm");
+				ag.addAttribute("name", "AG");
+				ag.addElement("lambda").setText("0.4");
+				ag.addElement("damping").setText("0.85");
+				ag.addElement("weightThreshold").setText(
+						String.valueOf(simuPara.getAgWeight()));
+				break;
+			case GrassHopper:
+				Element grasshopper = algorithms.addElement("algorithm");
+				grasshopper.addAttribute("name", "GrassHopper");
+				grasshopper.addElement("damping").setText(
+						String.valueOf(simuPara.getGrassHopperDamping()));
+				break;
+			case MMR:
+				Element mmr = algorithms.addElement("algorithm");
+				mmr.addAttribute("name", "MMR");
+				mmr.addElement("lambda").setText(
+						String.valueOf(simuPara.getMmrLambda()));
+				break;
+			case Motley:
+				Element motley = algorithms.addElement("algorithm");
+				motley.addAttribute("name", "Motley");
+				motley.addElement("theta").setText(
+						String.valueOf(simuPara.getMotleyTheta()));
+				break;
+			case MSD:
+				Element mmd = algorithms.addElement("algorithm");
+				mmd.addAttribute("name", "MSD");
+				mmd.addElement("lambda").setText(
+						String.valueOf(simuPara.getMsdLambda()));
 
-		Element mmd = algorithms.addElement("algorithm");
-		mmd.addAttribute("name", "MSD");
-		mmd.addElement("lambda").setText(
-				String.valueOf(simuPara.getMsdLambda()));
-
-		Element motley = algorithms.addElement("algorithm");
-		motley.addAttribute("name", "Motley");
-		motley.addElement("theta").setText(
-				String.valueOf(simuPara.getMotleyTheta()));
-
-		Element swap = algorithms.addElement("algorithm");
-		swap.addAttribute("name", "Swap");
-		swap.addElement("upperBound").setText(
-				String.valueOf(simuPara.getSwapUpperBound()));
-
-		Element grasshopper = algorithms.addElement("algorithm");
-		grasshopper.addAttribute("name", "GrassHopper");
-		grasshopper.addElement("damping").setText(
-				String.valueOf(simuPara.getGrassHopperDamping()));
+				break;
+			case Swap:
+				Element swap = algorithms.addElement("algorithm");
+				swap.addAttribute("name", "Swap");
+				swap.addElement("upperBound").setText(
+						String.valueOf(simuPara.getSwapUpperBound()));
+				break;
+			default:
+				break;
+			}
+		}
 
 		// Writing document contents to xml file
 		OutputFormat format = OutputFormat.createPrettyPrint();
