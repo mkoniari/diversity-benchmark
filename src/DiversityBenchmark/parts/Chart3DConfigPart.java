@@ -275,7 +275,7 @@ public class Chart3DConfigPart extends AbstractPart {
 		comboViewer.setContentProvider(new ArrayContentProvider()); // org.eclipse.jface.viewers.ArrayContentProvider()
 		comboViewer.setLabelProvider(new LabelProvider()); // org.eclipse.jface.viewers.LabelProvider()
 
-		Set<String> factorValues = (Set<String>) context
+		List<String> factorValues = (List<String>) context
 				.get(Constant.FACTOR_VALUES);
 		if (factorValues != null) {
 			String[] observerValues = factorValues.toArray(new String[0]);

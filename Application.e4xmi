@@ -4,18 +4,18 @@
     <children xsi:type="advanced:PerspectiveStack" xmi:id="_jpQ6RITbEeOIEtdKXcpHUg">
       <children xsi:type="advanced:Perspective" xmi:id="_jpQ6RYTbEeOIEtdKXcpHUg">
         <children xsi:type="basic:PartSashContainer" xmi:id="_jpQ6RoTbEeOIEtdKXcpHUg" horizontal="true">
-          <children xsi:type="basic:PartSashContainer" xmi:id="_q-ur4ITbEeOIEtdKXcpHUg" elementId="diversitybenchmark.partsashcontainer.0">
+          <children xsi:type="basic:PartSashContainer" xmi:id="_q-ur4ITbEeOIEtdKXcpHUg" elementId="diversitybenchmark.partsashcontainer.0" containerData="30">
             <children xsi:type="basic:PartStack" xmi:id="_-P4McITbEeOIEtdKXcpHUg" elementId="diversitybenchmark.partstack.4">
               <children xsi:type="basic:Part" xmi:id="_-dET4ITbEeOIEtdKXcpHUg" elementId="diversitybenchmark.part.3" contributionURI="bundleclass://DiversityBenchmark/DiversityBenchmark.parts.ConfigPart" label="Configuration"/>
             </children>
           </children>
-          <children xsi:type="basic:PartSashContainer" xmi:id="_rVBE8ITbEeOIEtdKXcpHUg" elementId="diversitybenchmark.partsashcontainer.1" horizontal="true">
+          <children xsi:type="basic:PartSashContainer" xmi:id="_rVBE8ITbEeOIEtdKXcpHUg" elementId="diversitybenchmark.partsashcontainer.1" containerData="70" horizontal="true">
             <children xsi:type="basic:PartStack" xmi:id="_srAAcITbEeOIEtdKXcpHUg" elementId="diversitybenchmark.partstack.chart">
               <children xsi:type="basic:Part" xmi:id="_JOJQ0ITcEeOIEtdKXcpHUg" elementId="diversitybenchmark.part.4" toBeRendered="false" visible="false" label="Chart"/>
             </children>
             <children xsi:type="basic:PartSashContainer" xmi:id="_R_s78JXFEeOT25TJtA2Rsw" elementId="diversitybenchmark.partsashcontainer.2">
               <children xsi:type="basic:PartStack" xmi:id="_UWxhAJXFEeOT25TJtA2Rsw" elementId="diversitybenchmark.partstack.chart3Dcontrol">
-                <children xsi:type="basic:Part" xmi:id="_WgdKUJXFEeOT25TJtA2Rsw" elementId="diversitybenchmark.part.chart3dcontrol" visible="false" contributionURI="bundleclass://DiversityBenchmark/DiversityBenchmark.parts.Chart3DConfigPart" label="Chart 3D Config"/>
+                <children xsi:type="basic:Part" xmi:id="_WgdKUJXFEeOT25TJtA2Rsw" elementId="diversitybenchmark.part.chart3dcontrol" toBeRendered="false" visible="false" contributionURI="bundleclass://DiversityBenchmark/DiversityBenchmark.parts.Chart3DConfigPart" label="Chart 3D Config"/>
               </children>
               <children xsi:type="basic:PartStack" xmi:id="_PZRWUITcEeOIEtdKXcpHUg" elementId="diversitybenchmark.partstack.chart3D">
                 <children xsi:type="basic:Part" xmi:id="_PnTyUITcEeOIEtdKXcpHUg" elementId="diversitybenchmark.part.0" toBeRendered="false" visible="false" label="Chart3D"/>

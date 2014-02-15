@@ -14,6 +14,6 @@
 	<classpathentry kind="lib" path="lib/jzy3d-jdt-core-0.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/gluegen-rt.jar"/>
 	<classpathentry kind="lib" path="lib/jogl-all.jar"/>
-	<classpathentry kind="lib" path="lib/benchmark_fat.jar"/>
+	<classpathentry kind="lib" path="lib/benchmark_fat.jar" sourcepath="/benchmark"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
