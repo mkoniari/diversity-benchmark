@@ -17,12 +17,17 @@ import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.swt.widgets.Composite;
 import org.jzy3d.bridge.swt.Bridge;
+//import org.jzy3d.bridge.awt.Bridge;
 import org.jzy3d.chart.Chart;
 import org.jzy3d.chart.controllers.mouse.camera.CameraMouseController;
+//import org.jzy3d.chart.controllers.mouse.camera.CameraMouseController;
 import org.jzy3d.colors.Color;
 import org.jzy3d.maths.Coord3d;
 import org.jzy3d.plot3d.primitives.Scatter;
+import org.jzy3d.plot3d.primitives.axes.IAxe;
+import org.jzy3d.plot3d.primitives.axes.layout.IAxeLayout;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
+import org.jzy3d.plot3d.rendering.view.View;
 
 import DiversityBenchmark.models.AlgorithmModel;
 import DiversityBenchmark.utils.Constant;
@@ -75,11 +80,16 @@ public class Chart3DPart {
 		scatter = generateScatter(ds);
 
 		// TODO Auto-generated method stub
-		// Chart chart = new Chart();
+//		 Chart chart = new Chart();
 		Chart chart = new Chart(Quality.Advanced, "awt");
 		// Chart chart = AWTChartComponentFactory.chart(Quality.Advanced,
 		// "newt");
-		chart.getAxeLayout().setMainColor(Color.WHITE);
+		View view = chart.getView();
+		IAxe axe = view.getAxe();
+		IAxeLayout layout = axe.getLayout();
+		layout.setMainColor(Color.WHITE);
+		layout.setZAxeLabel("Relevance value");
+		
 		chart.getView().setBackgroundColor(Color.BLACK);
 
 		// Load data and create scatter from file
@@ -96,7 +106,7 @@ public class Chart3DPart {
 		// scatter = testScatter();
 		chart.getScene().add(scatter);
 
-		chart.getAxeLayout().setZAxeLabel("Relevance value");
+		
 		// ChartLauncher.openChart(chart);
 		// ChartLauncher.configureControllers(chart, "Jzy3d", true, false);
 		// chart.render();
@@ -171,6 +181,7 @@ public class Chart3DPart {
 		}
 
 		Scatter scatter = new Scatter(points, colors);
+		scatter.setWidth((float) 5.0);
 		return scatter;
 
 	}
