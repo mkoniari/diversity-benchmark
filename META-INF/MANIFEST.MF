@@ -26,7 +26,10 @@ Require-Bundle: javax.inject;bundle-version="1.0.0",
 Import-Package: javax.annotation;version="1.0.0",
  org.eclipse.e4.ui.model.application,
  org.eclipse.e4.ui.model.application.ui,
- org.eclipse.e4.ui.model.application.ui.basic
+ org.eclipse.e4.ui.model.application.ui.basic,
+ org.eclipse.e4.ui.services,
+ org.eclipse.e4.ui.workbench,
+ org.eclipse.e4.ui.workbench.modeling
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: lib/dom4j-1.6.1.jar,
  lib/javacsv.jar,
