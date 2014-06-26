@@ -21,6 +21,10 @@ import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * @author Diversity
+ * Class used to handle the quit event
+ */
 public class QuitHandler {
 	@Execute
 	public void execute(IWorkbench workbench,

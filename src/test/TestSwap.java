@@ -28,6 +28,13 @@ import com.benchmark.generator.configuration.DatasetConfigLoader;
 import com.benchmark.metrics.Distance;
 import com.benchmark.utility.Constants;
 
+/**
+ * 
+ * @author Diversity
+ * An example class for the Swap algorithm which contains: load real data, generate synthetic data, visualize
+ * and metrics
+ * All the parameters in the UI can be config directly here
+ */
 public class TestSwap {
 	private static DataSet ds;
 	private static int distanceType;
@@ -36,12 +43,6 @@ public class TestSwap {
 		int k = 10;
 		// testSwap(k, 0.1);
 		testSwap(k, 0.4);
-
-		// Print dissimilarity matrix
-		// System.out.println(Utilities.printMatrix(ds, Distance.EUCLIDE,
-		// false));
-		// System.out.println(Utilities.printMatrix(ds, Distance.EUCLIDE,
-		// true));
 
 		DataObject[] candidates = ds.getDataObjects();
 		Comparator<DataObject> cmp = new Comparator<DataObject>() {
@@ -125,50 +126,11 @@ public class TestSwap {
 	}
 
 	protected static DataSet dataSet1() {
-		// ConfigurationLoader loader = new
-		// DatasetConfigLoader("data/relevance/prop.xml", false,
-		// "data/relevance/data");
-		// ConfigurationLoader loader = new
-		// DatasetConfigLoader("data/morecluster/c1/prop.xml", false,
-		// "data/morecluster/c1/data");
 		Constants.SEED = System.currentTimeMillis();
-		// Constants.SEED = Constants.SEEDS[1];
-		// ConfigurationLoader loader = new
-		// DatasetConfigLoader("data/morecluster/c1/prop.xml", true,
-		// "data/morecluster/c1/data2");
-		// ConfigurationLoader loader = new
-		// DatasetConfigLoader("data/overlap/prop.xml", true,
-		// "data/overlap/data");
-		// ConfigurationLoader loader = new DatasetConfigLoader(
-		// "data/distance/d0.02/prop.xml", true,
-		// "data/distance/d0.02/data2");
-//		ConfigurationLoader loader = new DatasetConfigLoader(
-//				"../code/data/numtopic/c6/prop.xml", true,
-//				"../code/data/numtopic/c6/data");
 		ConfigurationLoader loader = new DatasetConfigLoader(
 				"prop_1.0.xml", true,
 				"data");
-		// ConfigurationLoader loader = new DatasetConfigLoader(
-		// "data/mindist2/d20/prop.xml", true, "data/distance/d20/data");
-		// ConfigurationLoader loader = new DatasetConfigLoader(
-		// "data/numret/prop.xml", true, "data/numret/data");
-		// String str = "0.251";
-		// ConfigurationLoader loader = new DatasetConfigLoader(
-		// "data/mindist3/d" + str +"/prop.xml", true, "data/mindist3/d"+ str
-		// +"/data");
-		// ConfigurationLoader loader = new
-		// DatasetConfigLoader("data/powertail/d0.2/prop.xml", true,
-		// "data/powertail/d0.2/data2");
 		ds = loader.load(false);
-		// ds.saveDataFile("data/overlap/data");
-		// try {
-		// // ds = new DataSet("data/1",false);
-		// // ds = new DataSet("data/multicluster",true);
-		// ds = new DataSet("data/test",true);
-		// } catch (FileNotFoundException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
 		distanceType = Distance.EUCLIDE;
 		return ds;
 	}

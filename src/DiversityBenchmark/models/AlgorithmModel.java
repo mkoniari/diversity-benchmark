@@ -5,6 +5,12 @@ import java.util.Set;
 
 import DiversityBenchmark.utils.Constant.ALGORITHM;
 
+/**
+ * 
+ * @author Diversity
+ * Contains information about the algorithms
+ *
+ */
 public class AlgorithmModel extends AbstractModel {
 
 	public AlgorithmModel() {

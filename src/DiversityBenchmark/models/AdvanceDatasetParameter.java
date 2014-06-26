@@ -2,6 +2,12 @@ package DiversityBenchmark.models;
 
 import DiversityBenchmark.utils.Constant.CENTGEN;
 
+/**
+ * 
+ * @author Diversity
+ * Contains the all the fields for the advanced config
+ *
+ */
 public class AdvanceDatasetParameter extends AbstractModel {
 	private Double maxClusterDistance;
 	private Double minClusterDistance;

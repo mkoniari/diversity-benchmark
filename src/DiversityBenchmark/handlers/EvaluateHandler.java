@@ -52,90 +52,24 @@ public class EvaluateHandler {
 		genChartPart(partService, application, modelService, context,
 				partStackURI, chartPartURI, chartPartClass);
 
-		// String part3DStackURI = "diversitybenchmark.partstack.chart3D";
-		// String chart3DPartURI = "diversitybenchmark.part.chart3Dview.";
-		// String chart3DPartClass =
-		// "bundleclass://DiversityBenchmark/DiversityBenchmark.parts.Chart3DPart";
-		// genChart3DPart(partService, application, modelService, context,
-		// part3DStackURI, chart3DPartURI, chart3DPartClass);
-
-		// Add your Java objects to the context
-		// context.set(MyDataObject.class.getName(), data);
-		// context.set(MoreStuff.class, moreData);
-
 		eval_start.send(EventConstants.FUNCTION_SIMULATING_START, "start");
 
-		// Object expRes = context.get(Constant.EXP_RES);
 		String chart3DPartURI = "diversitybenchmark.part.chart3dcontrol";
-		// MPart configchart3DPart = partService.findPart(chart3DPartURI);
-
 		String part3DStackURI = "diversitybenchmark.partstack.chart3Dcontrol";
 		String chart3DConfigPartClass = "bundleclass://DiversityBenchmark/DiversityBenchmark.parts.Chart3DConfigPart";
 		List<MPartStack> stacks = modelService.findElements(application,
 				part3DStackURI, MPartStack.class, null);
 
-		// hide the part
-		// partService.hidePart(configchart3DPart);
-
-		// required if initial not visible
-		// if (configchart3DPart.isVisible()) {
-		// set context to this part
 
 		MPart part = MBasicFactory.INSTANCE.createPart();
 		part.setElementId(chart3DPartURI);
 		part.setContributionURI(chart3DConfigPartClass);
 		part.setContext(context);
 		part.setLabel("Chart 3D Config");
-		// part.setCloseable(true);
 		stacks.get(0).getChildren().clear();
 		stacks.get(0).getChildren().add(part);
 		partService.showPart(part, PartState.ACTIVATE);
-
-		// configchart3DPart.setContext(null);
-		// partService.hidePart(configchart3DPart);
-
-		// chart3DPartURI = part.getElementId();
-
-		// configchart3DPart.setContext(context);
-
-		// configchart3DPart.setVisible(true);
-		// partService.showPart(configchart3DPart, PartState.VISIBLE);
-
-		// } else {
-		// // set context to this part
-		// configchart3DPart.setContext(context);
-		//
-		// configchart3DPart.setVisible(true);
-		//
-		// // show the part
-		// // partService.bringToTop(configchart3DPart);
-		// partService.showPart(configchart3DPart, PartState.VISIBLE);
-		// }
-
 	}
-
-	// @SuppressWarnings("restriction")
-	// @Inject
-	// @Optional
-	// void evaluateHandler(
-	// @UIEventTopic(EventConstants.FUNCTION_SIMULATING_FINISHED) String s) {
-	// Object expRes = context.get(Constant.EXP_RES);
-	//
-	// MPart configchart3DPart = partService
-	// .findPart("diversitybenchmark.part.chart3dcontrol");
-	//
-	// // hide the part
-	// // partService.hidePart(configchart3DPart);
-	//
-	// // required if initial not visible
-	// configchart3DPart.setVisible(true);
-	//
-	// // set context to this part
-	// configchart3DPart.setContext(context);
-	//
-	// // show the part
-	// partService.showPart(configchart3DPart, PartState.VISIBLE);
-	// }
 
 	private void genChart3DPart(EPartService partService,
 			MApplication application, EModelService modelService,
@@ -159,7 +93,6 @@ public class EvaluateHandler {
 		if (o instanceof MetricModel) {
 			new3DPart.clear();
 			MetricModel metrics = (MetricModel) o;
-			// System.out.println(metrics.toString());
 			for (Metric metric : metrics.getMetrics()) {
 				String partID = genPartID(METRIC.valueOf(metric.getName()),
 						factor.toString());
@@ -175,7 +108,6 @@ public class EvaluateHandler {
 					part.setContributionURI(chartPartClass);
 					part.setContext(context);
 					part.setLabel(metric.getName() + " vs. " + factor);
-					// part.setCloseable(true);
 					stacks.get(0).getChildren().add(part);
 					partService.showPart(part, PartState.ACTIVATE);
 				}
@@ -212,7 +144,6 @@ public class EvaluateHandler {
 		if (o instanceof MetricModel) {
 			newPart.clear();
 			MetricModel metrics = (MetricModel) o;
-			// System.out.println(metrics.toString());
 			for (Metric metric : metrics.getMetrics()) {
 				String partID = genPartID(METRIC.valueOf(metric.getName()),
 						factor.toString());
@@ -228,7 +159,6 @@ public class EvaluateHandler {
 					part.setContributionURI(chartPartClass);
 					part.setContext(context);
 					part.setLabel(metric.getName() + " vs. " + factor);
-					// part.setCloseable(true);
 					stacks.get(0).getChildren().add(part);
 					partService.showPart(part, PartState.ACTIVATE);
 				}
@@ -254,9 +184,5 @@ public class EvaluateHandler {
 			throw new IllegalArgumentException(String.valueOf(metric));
 		}
 	}
-
-	// public static String genPartID(String curAlgorithm, String curFactor) {
-	// return curAlgorithm.toLowerCase() + "_" + curFactor.toLowerCase();
-	// }
 
 }

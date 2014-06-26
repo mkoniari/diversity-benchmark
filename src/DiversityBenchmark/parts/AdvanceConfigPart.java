@@ -41,6 +41,12 @@ import DiversityBenchmark.utils.Constant.CENTGEN;
 import DiversityBenchmark.utils.ContextUtil;
 import DiversityBenchmark.utils.NumericValidator;
 
+/**
+ * 
+ * @author Diversity
+ * UI for the Advanced config 
+ *
+ */
 public class AdvanceConfigPart extends TitleAreaDialog {
 	private AdvanceDatasetParameter advanceConfig;
 
@@ -110,17 +116,12 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 		super.create();
 		// Set the title
 		setTitle("Advance Configuration\r\n");
-		// Set the message
-		// setMessage("This is a TitleAreaDialog",
-		// IMessageProvider.INFORMATION);
-
 	}
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		// layout.horizontalAlignment = GridData.FILL;
 		parent.setLayout(layout);
 
 		// The text fields will grow with the size of the dialog
@@ -163,7 +164,6 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 	private void addResultSection(Composite parent) {
 		sctnResult = toolkit.createSection(form.getBody(),
 				Section.CLIENT_INDENT | Section.TITLE_BAR);
-		// gd_workerSection.widthHint = 335;
 		sctnResult.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
 				1, 2));
 
@@ -297,7 +297,6 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 	private void addDatasetSection(Composite parent) {
 		sctnDataset = toolkit.createSection(form.getBody(),
 				Section.CLIENT_INDENT | Section.TITLE_BAR);
-		// gd_workerSection.widthHint = 335;
 		sctnDataset.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
 				1, 2));
 
@@ -352,7 +351,6 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 	private void addCentGenSection(Composite parent) {
 		sctnCentGen = toolkit.createSection(form.getBody(),
 				Section.CLIENT_INDENT | Section.TITLE_BAR);
-		// gd_workerSection.widthHint = 335;
 		GridData gd_sctnCentGen = new GridData(SWT.FILL, SWT.FILL, true, true,
 				1, 1);
 		gd_sctnCentGen.widthHint = 293;
@@ -393,8 +391,6 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 			@Override
 			public void handleEvent(Event event) {
 				advanceConfig.setCentgenName(combo.getText());
-				// System.out.println(filterByText[index]);
-
 			}
 		});
 
@@ -430,28 +426,6 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 			} else {
 				UpdateValueStrategy strategy = new UpdateValueStrategy();
 				strategy.setAfterGetValidator(validator);
-				// strategy.setBeforeSetValidator(validator);
-				// strategy.setAfterConvertValidator(validator);
-				// strategy.setConverter(new Converter(String.class,
-				// Integer.class) {
-				//
-				// @Override
-				// public Object convert(Object o) {
-				// if (o == null) {
-				// return 0;
-				// }
-				// if (o instanceof String) {
-				// System.out.println("Convert");
-				// String str = (String) o;
-				// if (str.trim().isEmpty()) {
-				// return 0;
-				// }
-				// return Integer.valueOf(str);
-				// }
-				// return o;
-				// }
-				//
-				// });
 				Binding bindValue = ctx.bindValue(widgetValue, modelValue,
 						strategy, null);
 				// Add some decorations
@@ -530,9 +504,6 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 	// Coyy textFields because the UI gets disposed
 	// and the Text Fields are not accessible any more.
 	private void saveInput() {
-		// saveWorker();
-		// saveAlgos();
-		// advanceConfig.writeAdvanceConfigFile(Constant.ADVANCE_CONFIG_FILE);
 		ContextUtil.updateContext(context, Constant.ADVANCED_PARA,
 				advanceConfig);
 	}

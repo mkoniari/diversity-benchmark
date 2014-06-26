@@ -50,36 +50,6 @@ public class Constant {
 		NumOfTopics, Relevance_Difference, NumOfResults, Topic_Dissimilarity;
 	}
 
-	// public static enum FACTOR {
-	// NumOfTopics("No. Topics"), Relevance_Difference("Relevance difference"),
-	// NumOfResults(
-	// "No. Results"), Topic_Dissimilarity("Topic Dissimilarity");
-	//
-	// private String value;
-	//
-	// FACTOR(String value) {
-	// this.value = value;
-	// }
-	//
-	// public String getValue() {
-	// return value;
-	// }
-	//
-	// @Override
-	// public String toString() {
-	// return this.getValue();
-	// }
-	//
-	// public static FACTOR getEnum(String value) {
-	// if (value == null)
-	// throw new IllegalArgumentException();
-	// for (FACTOR v : values())
-	// if (value.equalsIgnoreCase(v.getValue()))
-	// return v;
-	// throw new IllegalArgumentException();
-	// }
-	// };
-
 	public static enum CENTGEN {
 		Line, circle
 

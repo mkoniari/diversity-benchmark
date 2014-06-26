@@ -27,6 +27,12 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * 
+ * @author Diversity
+ * Class used to handle the save event
+ *
+ */
 public class SaveHandler {
 	@CanExecute
 	public boolean canExecute(
@@ -53,8 +59,6 @@ public class SaveHandler {
 				pmContext.set(IProgressMonitor.class.getName(), monitor);
 				if (contribution != null) {
 					Object clientObject = contribution.getObject();
-//					ContextInjectionFactory.invoke(clientObject, Persist.class, //$NON-NLS-1$
-//							pmContext, null);
 				}
 			}
 		});

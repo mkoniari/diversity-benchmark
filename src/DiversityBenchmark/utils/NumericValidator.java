@@ -4,6 +4,12 @@ import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 
+/**
+ * 
+ * @author Diversity
+ * Contains the validators for the numbers
+ *
+ */
 public class NumericValidator implements IValidator {
 	private String integerPattern = "\\d*";
 	private String doublePattern = "^[-+]?\\d+(\\.{0,1}(\\d+?))?$";

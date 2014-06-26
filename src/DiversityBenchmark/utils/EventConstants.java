@@ -1,5 +1,11 @@
 package DiversityBenchmark.utils;
 
+/**
+ * 
+ * @author Diversity
+ * Contains the event ids
+ *
+ */
 public class EventConstants {
 	public static final String DATA_UPDATE = "DATA_UPDATE/*";
 

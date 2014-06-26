@@ -1,5 +1,11 @@
 package DiversityBenchmark.models;
 
+/**
+ * 
+ * @author Diversity
+ * Models the underlying data
+ *
+ */
 public class Data extends AbstractModel {
 	private String evalID;
 	private String numberOfSubtopics;
@@ -115,12 +121,5 @@ public class Data extends AbstractModel {
 				this.normalizedRelevance,
 				this.normalizedRelevance = normalizedRelevance);
 	}
-
-	// @Override
-	// public String toString() {
-	// return evalID + "\t" + answerPerQuestion + "\t" + algorithm + "\t"
-	// + workerEstimation + "\t" + accuracy + "\t" + duration + "\t"
-	// + observer;
-	// }
 
 }

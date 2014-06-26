@@ -51,6 +51,12 @@ import DiversityBenchmark.utils.Constant;
 import DiversityBenchmark.utils.Constant.FACTOR;
 import DiversityBenchmark.utils.ContextUtil;
 
+/**
+ * 
+ * @author Diversity
+ * UI for the 3D Chart config
+ *
+ */
 public class Chart3DConfigPart extends AbstractPart {
 
 	private FormToolkit toolkit;
@@ -185,13 +191,9 @@ public class Chart3DConfigPart extends AbstractPart {
 		DataBindingContext ctx = new DataBindingContext();
 		IObservableSet modelSet = BeansObservables.observeSet(
 				Realm.getDefault(), selectedAlgorithm, "algorithms");
-		// ViewerSupport.bind(checkboxTableViewer, modelSet,
-		// BeanProperties.value(Algorithm.class, "name"));
 
 		IObservableSet widgetSet = ViewersObservables.observeCheckedElements(
 				algorithmTableViewer, Algorithm.class);
-		// modelSet = BeansObservables.obser(Realm.getDefault(),
-		// selectedAlgorithm, "algorithms");
 
 		ctx.bindSet(widgetSet, modelSet);
 
@@ -209,7 +211,6 @@ public class Chart3DConfigPart extends AbstractPart {
 
 		Section chart3DConfigSection = toolkit.createSection(form.getBody(),
 				Section.CLIENT_INDENT | Section.TITLE_BAR);
-		// gd_workerSection.widthHint = 335;
 		chart3DConfigSection.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
 				true, true, 1, 1));
 		FACTOR factor = (FACTOR) context.get(Constant.FACTOR);
@@ -221,7 +222,6 @@ public class Chart3DConfigPart extends AbstractPart {
 		toolkit.paintBordersFor(char3DConfigSectionBody);
 		chart3DConfigSection.setClient(char3DConfigSectionBody);
 		char3DConfigSectionBody.setLayout(new GridLayout(2, false));
-		// new Label(form.getBody(), SWT.NONE);
 		createCharr3DForm(char3DConfigSectionBody);
 		new Label(char3DConfigSectionBody, SWT.NONE);
 		new Label(char3DConfigSectionBody, SWT.NONE);
@@ -290,8 +290,6 @@ public class Chart3DConfigPart extends AbstractPart {
 				@Override
 				public void handleEvent(Event event) {
 					index = combo.getSelectionIndex();
-					// System.out.println(filterByText[index]);
-
 				}
 			});
 		}
@@ -306,18 +304,8 @@ public class Chart3DConfigPart extends AbstractPart {
 				.newCheckList(composite, SWT.BORDER | SWT.FULL_SELECTION
 						| SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE);
 		Table table = checkboxTableViewer.getTable();
-		// table.setHeaderVisible(true);
 		toolkit.paintBordersFor(table);
-		// TableColumn tableColumn = new TableColumn(table, SWT.NONE);
-		// tableColumn.setText("Select All");
-		// tableColumn.setImage(new Image(Display.getCurrent(),
-		// "icons/checkbox.gif"));
-		//
-		// tableColumnLayout.setColumnData(tableColumn, new ColumnWeightData(20,
-		// 150, true));
-		// tableColumn.setWidth(150);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(table);
-		// addSelectAllListener(table, tableItem);
 		checkboxTableViewer.addCheckStateListener(new ICheckStateListener() {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -326,32 +314,14 @@ public class Chart3DConfigPart extends AbstractPart {
 				if (Constant.SELECTALL.equalsIgnoreCase(ele.toString())) {
 					if (checked) {
 						checkboxTableViewer.setAllChecked(true);
-						// System.out.println(selectedAlgorithm);
 					} else {
 						checkboxTableViewer.setAllChecked(false);
-						// System.out.println(selectedAlgorithm);
 					}
 
 				}
 			}
 		});
 		return checkboxTableViewer;
-
-		// friendsViewer = CheckboxTableViewer.newCheckList(friendsComposite,
-		// SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION);
-		//
-		// Table friendsTable = friendsViewer.getTable();
-		// friendsTable.setHeaderVisible(true);
-		// friendsTable.setLinesVisible(true);
-		// TableColumn friendNameColumn = new TableColumn(friendsTable,
-		// SWT.NONE);
-		// friendNameColumn.setText("Name");
-		// friendsColumnLayout.setColumnData(friendNameColumn,
-		// new ColumnWeightData(1));
-		//
-		// GridDataFactory.fillDefaults().grab(true, true)
-		// .applyTo(friendsViewer.getTable());
-
 	}
 
 	public static String genPartID(String curAlgorithm, String curFactor) {

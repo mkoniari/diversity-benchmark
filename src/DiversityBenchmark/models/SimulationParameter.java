@@ -3,6 +3,12 @@ package DiversityBenchmark.models;
 import java.beans.PropertyChangeSupport;
 import java.util.Map;
 
+/**
+ * 
+ * @author Diversity
+ * Contains the parameter for the simulation
+ *
+ */
 public class SimulationParameter extends AbstractModel {
 
 	private Integer numOfClusters;
@@ -39,28 +45,6 @@ public class SimulationParameter extends AbstractModel {
 	}
 
 	private void initMap() {
-		// ConfigReader reader = new ConfigReader();
-		// reader.readfile(Constant.SIMULATE_INIT_FILE);
-		// list = reader.getConfig();
-		// this.uniformSpammer = Integer.parseInt(list.get("uniformSpammer"));
-		// this.randomSpammer = Integer.parseInt(list.get("randomSpammer"));
-		// this.expert = Integer.parseInt(list.get("expert"));
-		// this.normalWorker = Integer.parseInt(list.get("normalWorker"));
-		// this.sloppyWorker = Integer.parseInt(list.get("sloppyWorker"));
-		// this.question = Integer.parseInt(list.get("question"));
-		// this.category = Integer.parseInt(list.get("category"));
-		// this.trapQuestion = Integer.parseInt(list.get("trapQuestion"));
-		// this.answerPerQuestion = Integer
-		// .parseInt(list.get("answerPerQuestion"));
-		// this.answerPerWorker = Integer.parseInt(list.get("answerPerWorker"));
-		// this.minCommonQuestion = Integer
-		// .parseInt(list.get("minCommonQuestion"));
-		// this.index = Integer.parseInt(list.get("observer"));
-		// this.minObserverValue =
-		// Integer.parseInt(list.get("minObserverValue"));
-		// this.maxObserverValue =
-		// Integer.parseInt(list.get("maxObserverValue"));
-		// this.stepObserverValue = Integer.parseInt(list.get("step"));
 
 	}
 

@@ -1,5 +1,11 @@
 package DiversityBenchmark.models;
 
+/**
+ * 
+ * @author Diversity
+ * Contains the parameters for the algorithms
+ *
+ */
 public class AlgorithmParameter extends AbstractModel {
 	private boolean ag;
 	private boolean grassHopper;

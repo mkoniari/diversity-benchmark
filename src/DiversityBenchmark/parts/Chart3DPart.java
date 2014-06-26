@@ -39,6 +39,12 @@ import com.benchmark.data.DataObject;
 import com.benchmark.data.DataSet;
 import com.benchmark.exp.ExpNumSubtopic;
 
+/**
+ * 
+ * @author Diversity
+ * UI for the 3D chart
+ *
+ */
 public class Chart3DPart {
 
 	@Inject
@@ -59,7 +65,6 @@ public class Chart3DPart {
 	public void createComposite(Composite parent) {
 		this.parent = parent;
 		initChartInfo();
-		// // createTestData();
 		try {
 			chart = createChart();
 		} catch (IOException e) {
@@ -67,10 +72,6 @@ public class Chart3DPart {
 		}
 		Bridge.adapt(parent, (java.awt.Component) chart.getCanvas());
 		chart.addController(new CameraMouseController());
-		// parent.setLayout(new GridLayout());
-
-		// Bridge.adapt(parent, (Component) createChart().getCanvas());
-
 	}
 
 	private Chart createChart() throws IOException {
@@ -79,11 +80,7 @@ public class Chart3DPart {
 		DataSet ds = expRes.get(curFactorValue).algor2ds.get(curAlgorithm);
 		scatter = generateScatter(ds);
 
-		// TODO Auto-generated method stub
-//		 Chart chart = new Chart();
 		Chart chart = new Chart(Quality.Advanced, "awt");
-		// Chart chart = AWTChartComponentFactory.chart(Quality.Advanced,
-		// "newt");
 		View view = chart.getView();
 		IAxe axe = view.getAxe();
 		IAxeLayout layout = axe.getLayout();
@@ -92,28 +89,7 @@ public class Chart3DPart {
 		
 		chart.getView().setBackgroundColor(Color.BLACK);
 
-		// Load data and create scatter from file
-		// String dataFile = "";
-		// String resultFile = "";
-		// String configFile = "";
-		// ConfigurationLoader loader = new DatasetConfigLoader(configFile,
-		// false,
-		// dataFile);
-		// DataSet ds = loader.load(false);
-		// Utilities.loadSelected(resultFile, ds);
-		// scatter = generateScatter(ds);
-
-		// scatter = testScatter();
 		chart.getScene().add(scatter);
-
-		
-		// ChartLauncher.openChart(chart);
-		// ChartLauncher.configureControllers(chart, "Jzy3d", true, false);
-		// chart.render();
-		// ChartLauncher.openChart(chart);
-
-		// Create a chart
-
 		return chart;
 
 	}
@@ -193,13 +169,11 @@ public class Chart3DPart {
 
 			assert tmp.getAlgorithms().size() != 1;
 			yAxisTitle = tmp.toString();
-			// curAlgorithm = METRIC.valueOf(yAxisTitle);
 			curAlgorithm = tmp.toString();
 		}
 
 		Object factor = context.get(Constant.FACTOR);
 		if (factor != null & factor instanceof FACTOR) {
-			// curFactorValue = (FACTOR) factor;
 			curFactor = ((FACTOR) factor).toString();
 			Object factorValue = context.get(Constant.FACTOR_VALUE);
 			if (factorValue != null & factorValue instanceof String) {
@@ -210,14 +184,7 @@ public class Chart3DPart {
 			xAxisTitle = curFactor;
 		}
 
-		// partID = EvaluateHandler.genPartID(curAlgorithm,
-		// curFactorValue.toString());
 		partID = Chart3DConfigPart.genPartID(curAlgorithm, curFactor);
-		// partID = EvaluateHandler.genPartID(curMetric,
-		// curFactorValue.toString());
-
-		// dataset = new DefaultCategoryDataset();
-		// scatter = new Scatter();
 	}
 
 	private void createTestData() {
@@ -238,20 +205,9 @@ public class Chart3DPart {
 		if (tmp instanceof Set<?>) {
 			Set<String> newparts = (Set<String>) tmp;
 			if (newparts.contains(partID)) {
-				// this.scatter =
-				// chart.clear();
-				// chart.getScene().clear();
 				chart.getScene().getGraph().getAll().clear();
-				// chart.getScene().add(scatter1);
 				chart.getScene().getGraph().add(scatter1);
 				chart.render();
-
-				// this.scatter = scatter;
-				// chart.getScene().getGraph().add(drawable);
-				// testScatter();
-				// chart.getScene().add(scatter);
-				// chart.render();
-				// chart = createChart();
 			}
 		}
 	}

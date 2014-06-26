@@ -19,6 +19,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+/**
+ * 
+ * @author Diversity
+ * A sample UI for reference
+ *
+ */
 public class SamplePart {
 
 	private Label label;

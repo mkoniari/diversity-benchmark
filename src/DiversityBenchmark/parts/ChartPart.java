@@ -32,12 +32,16 @@ import DiversityBenchmark.utils.Constant.FACTOR;
 import DiversityBenchmark.utils.Constant.METRIC;
 import DiversityBenchmark.utils.EventConstants;
 
+/**
+ * 
+ * @author Diversity
+ * UI for the 2D charts
+ *
+ */
 public class ChartPart {
 
 	private List<Data> data;
 	private Map<String, List<Data>> map;
-	// CHART_XY chartType = CHART_XY.AnswerPerQuestion_Accurary;
-	// Map<CHART_XY, XYSeriesCollection> chartInfo;
 
 	@Inject
 	IEclipseContext context;
@@ -96,48 +100,10 @@ public class ChartPart {
 	}
 
 	private void createTestData() {
-		// CSVReader reader = new CSVReader();
-		// reader.readfile(Constant.RESULT_TEST_FILE);
-		// this.data = reader.getContent();
-
-		// dataset.setValue(6, "Profit1", "Jane");
-		// dataset.setValue(3, "Profit2", "Jane");
-		// dataset.setValue(7, "Profit1", "Tom");
-		// dataset.setValue(10, "Profit2", "Tom");
-		// dataset.setValue(8, "Profit1", "Jill");
-		// dataset.setValue(8, "Profit2", "Jill");
-		// dataset.setValue(5, "Profit1", "John");
-		// dataset.setValue(6, "Profit2", "John");
-		// dataset.setValue(12, "Profit1", "Fred");
-		// dataset.setValue(5, "Profit2", "Fred");
 
 	}
 
-	// private JFreeChart createChart(List<Data> data, CHART_XY chartType) {
-	// // if (data == null) {
-	// // return createChart(createDataSet(data, CHART_XY.DEFAULT),
-	// // CHART_XY.DEFAULT);
-	// // }
-	// // return createChart(createDataSet(data, chartType), chartType);
-	// }
-
 	private JFreeChart createChart(CategoryDataset dataset) {
-
-		// switch (chartType) {
-		// case AnswerPerQuestion_Accurary:
-		// xAxisTitle = Constant.ANSWER_PER_QUESTION;
-		// yAxisTitle = Constant.ACCURACY;
-		// chartTitle = Constant.ACCURACY_VS_ANSWER_PER_QUESTION;
-		// break;
-		//
-		// case AnswerPerQuestion_CompletionTime:
-		// xAxisTitle = Constant.ANSWER_PER_QUESTION;
-		// yAxisTitle = Constant.COMPLETETION_TIME + " (ms)";
-		// chartTitle = Constant.COMPLETETION_VS_ANSWER_PER_QUESTION;
-		// break;
-		// default:
-		// break;
-		// }
 		JFreeChart chart = ChartFactory.createBarChart(chartTitle, xAxisTitle, // x
 																				// axis
 																				// label
@@ -152,22 +118,6 @@ public class ChartPart {
 		chart.getTitle().setPaint(Color.blue); // Adjust the colour of the title
 		CategoryPlot plot = chart.getCategoryPlot();
 		plot.setBackgroundPaint(Color.lightGray); // Modify the plot background
-		// plot.setDomainGridlinePaint(Color.white);
-		// plot.setRangeGridlinePaint(Color.white);
-		// plot.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-		// plot.setDomainCrosshairVisible(true);
-		// plot.setRangeCrosshairVisible(true);
-
-		// XYItemRenderer r = plot.getRenderer();
-		// if (r instanceof XYLineAndShapeRenderer) {
-		// XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
-		// renderer.setBaseShapesVisible(true);
-		// renderer.setBaseShapesFilled(true);
-		// }
-
-		// change the auto tick unit selection to integer units only...
-		// NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-		// rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
 		return chart;
 	}
@@ -180,40 +130,8 @@ public class ChartPart {
 		}
 		map = new HashMap<String, List<Data>>();
 		for (Data d : data) {
-			// if (!map.containsKey(d.getAlgorithm())) {
-			// List<Data> tmp = new ArrayList<Data>();
-			// tmp.add(d);
-			// map.put(d.getAlgorithm(), tmp);
-			// } else {
-			// map.get(d.getAlgorithm()).add(d);
-			// }
 		}
 
-		// switch (chartType) {
-		// case AnswerPerQuestion_CompletionTime:
-		// for (String algo : map.keySet()) {
-		// List<Data> value = map.get(algo);
-		// XYSeries series = new XYSeries(algo);
-		// for (Data d : value) {
-		// series.add(Double.valueOf(d.getObserver()),
-		// Double.valueOf(d.getCompletionTime()));
-		// }
-		// dataset.addSeries(series);
-		// }
-		// break;
-
-		// case AnswerPerQuestion_Accurary:
-		// for (String algo : map.keySet()) {
-		// List<Data> value = map.get(algo);
-		// XYSeries series = new XYSeries(algo);
-		// for (Data d : value) {
-		// series.add(Double.valueOf(d.getObserver()),
-		// Double.valueOf(d.getAccuracy()));
-		// }
-		// dataset.addSeries(series);
-		// }
-		// break;
-		// }
 		switch (curMetric) {
 		case NormalizedRelevance:
 			for (Data d : data) {
@@ -238,15 +156,6 @@ public class ChartPart {
 					break;
 				}
 			}
-			// for (String algo : map.keySet()) {
-			// List<Data> value = map.get(algo);
-			// XYSeries series = new XYSeries(algo);
-			// for (Data d : value) {
-			// series.add(Double.valueOf(d.getObserver()),
-			// Double.valueOf(d.getWorkerEstimation()));
-			// }
-			// dataset.addSeries(series);
-			// }
 			break;
 		case SRecall:
 			for (Data d : data) {
@@ -322,17 +231,6 @@ public class ChartPart {
 			}
 		}
 	}
-
-	//
-	// @Inject
-	// @Optional
-	// void updateHandler(
-	// @UIEventTopic(EventConstants.OBSERVER_UPDATE_UPDATED) String observer) {
-	// Object metrics = context.get(Constant.METRIC);
-	// if (metrics != null && metrics instanceof MetricModel) {
-	//
-	// }
-	// }
 
 	@PreDestroy
 	private void dispose() {

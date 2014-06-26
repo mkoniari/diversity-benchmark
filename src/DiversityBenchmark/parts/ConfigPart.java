@@ -84,6 +84,12 @@ import DiversityBenchmark.utils.NumericValidator;
 import com.benchmark.exp.ExpNumSubtopic;
 import com.benchmark.utility.Utilities;
 
+/**
+ * 
+ * @author Diversity
+ * UI for the config part
+ *
+ */
 public class ConfigPart extends AbstractPart {
 
 	private FormToolkit toolkit;
@@ -280,7 +286,6 @@ public class ConfigPart extends AbstractPart {
 
 		Section clusterSection = toolkit.createSection(form.getBody(),
 				Section.CLIENT_INDENT | Section.TITLE_BAR);
-		// gd_workerSection.widthHint = 335;
 		clusterSection.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				true, 1, 1));
 		clusterSection.setText("Dataset");
@@ -290,7 +295,6 @@ public class ConfigPart extends AbstractPart {
 		toolkit.adapt(clusterSectionBody);
 		toolkit.paintBordersFor(clusterSectionBody);
 		clusterSection.setClient(clusterSectionBody);
-		// new Label(form.getBody(), SWT.NONE);
 		createClusterForm(clusterSectionBody);
 
 		// Create algorithm section
@@ -355,8 +359,6 @@ public class ConfigPart extends AbstractPart {
 			@Override
 			public void handleEvent(Event event) {
 				index = combo.getSelectionIndex();
-				// System.out.println(filterByText[index]);
-
 			}
 		});
 
@@ -448,11 +450,6 @@ public class ConfigPart extends AbstractPart {
 	protected String saveConfig(String filename) {
 		File outfile = new File(filename);
 		try {
-
-			/*
-			 * if (!(new File(outfile.getParent()).exists())) { (new
-			 * File(outfile.getParent())).mkdirs(); }
-			 */
 			BufferedWriter bw = new BufferedWriter(new FileWriter(outfile));
 			Integer numOfClusters = getValue(simuPara.getNumOfClusters());
 			Integer sizeOfCluster = getValue(simuPara.getSizeOfClusters());
@@ -655,10 +652,6 @@ public class ConfigPart extends AbstractPart {
 		for (Metric metric : selectedMetric.getMetrics()) {
 			metricTableViewer.add(metric);
 		}
-		// Table table = metricTableViewer.getTable();
-		// addSelectAllListener(table);
-		// table.setSize(100, 100);
-		// table.pack();
 	}
 
 	private void addAlgorithmSection(Composite parent) {
@@ -685,11 +678,6 @@ public class ConfigPart extends AbstractPart {
 		for (Algorithm algo : selectedAlgorithm.getAlgorithms()) {
 			algorithmTableViewer.add(algo);
 		}
-		// Table table = algorithmTableViewer.getTable();
-		// addSelectAllListener(table);
-		// table.setSize(100, 100);
-		// table.pack();
-		// table.deselectAll();
 	}
 
 	private void createAlgorithmForm(Composite parent) {
@@ -804,18 +792,8 @@ public class ConfigPart extends AbstractPart {
 				.newCheckList(composite, SWT.BORDER | SWT.FULL_SELECTION
 						| SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE);
 		Table table = checkboxTableViewer.getTable();
-		// table.setHeaderVisible(true);
 		toolkit.paintBordersFor(table);
-		// TableColumn tableColumn = new TableColumn(table, SWT.NONE);
-		// tableColumn.setText("Select All");
-		// tableColumn.setImage(new Image(Display.getCurrent(),
-		// "icons/checkbox.gif"));
-		//
-		// tableColumnLayout.setColumnData(tableColumn, new ColumnWeightData(20,
-		// 150, true));
-		// tableColumn.setWidth(150);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(table);
-		// addSelectAllListener(table, tableItem);
 		checkboxTableViewer.addCheckStateListener(new ICheckStateListener() {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -841,21 +819,6 @@ public class ConfigPart extends AbstractPart {
 			}
 		});
 		return checkboxTableViewer;
-
-		// friendsViewer = CheckboxTableViewer.newCheckList(friendsComposite,
-		// SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION);
-		//
-		// Table friendsTable = friendsViewer.getTable();
-		// friendsTable.setHeaderVisible(true);
-		// friendsTable.setLinesVisible(true);
-		// TableColumn friendNameColumn = new TableColumn(friendsTable,
-		// SWT.NONE);
-		// friendNameColumn.setText("Name");
-		// friendsColumnLayout.setColumnData(friendNameColumn,
-		// new ColumnWeightData(1));
-		//
-		// GridDataFactory.fillDefaults().grab(true, true)
-		// .applyTo(friendsViewer.getTable());
 
 	}
 
@@ -883,28 +846,11 @@ public class ConfigPart extends AbstractPart {
 	@Optional
 	void evaluateHandler(
 			@UIEventTopic(EventConstants.FUNCTION_SIMULATING_START) String s) {
-		// System.out.println("Start Evaluating...");
 		startEvaluating();
-		// System.out.println(selectedAlgorithm.toString());
-		// System.out.println("End Evaluating");
 	}
 
 	private void startEvaluating() {
-
-		// TODO: generate algor.xml and prop.xml
-
-		// sent signal to simulate model
 		eval_start.send(EventConstants.DATA_SIMULATING_START, "start");
-
-		// run algorithms;
-		/*
-		 * if (model != null) { Experiment_Evaluate eval = new
-		 * Experiment_Evaluate(); eval.SetFileConfig(Constant.ALGO_CONFIG_FILE);
-		 * eval.setModel(model); eval.run(); } else {
-		 * System.out.println("No input data"); }
-		 * importResult(Constant.RESULT_FILE);
-		 */
-
 	}
 
 	@SuppressWarnings("restriction")
@@ -914,15 +860,12 @@ public class ConfigPart extends AbstractPart {
 			@UIEventTopic(EventConstants.DATA_SIMULATING_START) String s) {
 		// start simulate
 		System.out.println("Simulating data...");
-		// startSimulate();
 		System.out.println("Data Generated");
-		// broker.send(EventConstants.DATA_UPDATE_CLEAR, 0);
 
 		Double minvalue = simuPara.getMinObserverValue();
 		Double maxValue = simuPara.getMaxObserverValue();
 		Double step = simuPara.getStepObserverValue();
 		if (minvalue == null || maxValue == null) {
-			// throw new IllegalArgumentException();
 			return;
 		}
 		double interval = maxValue - minvalue;
@@ -937,8 +880,6 @@ public class ConfigPart extends AbstractPart {
 		while (start <= maxValue) {
 
 			double value = start;
-			// System.out.println("value: " + value + ", key: " + attribute);
-			// test(initHashMap(value, attribute));
 
 			String outFile = data + "_" + value;
 			String algorCon = algorxml + "_" + value + ".xml";
@@ -961,7 +902,6 @@ public class ConfigPart extends AbstractPart {
 			exp.run();
 			List<Data> data = writeResults(exp, resFile);
 			datas.addAll(data);
-			// System.out.println("thang ga: " + exp.ds.getSelected().size());
 
 			NumberFormat formatter = new DecimalFormat("#0.000");
 			String fv = formatter.format(value);
@@ -972,14 +912,9 @@ public class ConfigPart extends AbstractPart {
 			evalID++;
 		}
 		chart.post(EventConstants.RESULT_UPDATE_UPDATED, datas);
-		// Scatter scatter =
-		// expRes.values().iterator().next().generateScatter();
-		// chart3D.post(EventConstants.RESULT_UPDATE_UPDATED, scatter);
 		context.set(Constant.EXP_RES, expRes);
 		context.set(Constant.FACTOR_VALUES, factorValues);
 		System.out.println("End Evaluting!");
-		// eval_start
-		// .send(EventConstants.FUNCTION_SIMULATING_FINISHED, "finished");
 	}
 
 	private void storeResult(ExpNumSubtopic exp, String dataFile,
@@ -998,11 +933,6 @@ public class ConfigPart extends AbstractPart {
 		for (String algor : exp.algor2recall.keySet()) {
 			DiversityBenchmark.models.Algorithm algorithm = new DiversityBenchmark.models.Algorithm();
 			algorithm.setName(algor);
-			// Data data = new Data(evalID + "", algor,
-			// exp.algor2nrel.get(algor),
-			// exp.ds.getNumberOfClusters() + "",
-			// exp.alLoader.getNumResults() + "", 0 + "", 0.0,
-			// exp.algor2recall.get(algor), 0 + "");
 			Data data = new Data(evalID + "", algor, exp.algor2nrel.get(algor),
 					exp.ds.getNumberOfClusters() + "",
 					exp.alLoader.getNumResults() + "",

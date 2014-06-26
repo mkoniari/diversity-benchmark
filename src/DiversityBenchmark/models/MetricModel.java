@@ -5,6 +5,12 @@ import java.util.Set;
 
 import DiversityBenchmark.utils.Constant.METRIC;
 
+/**
+ * 
+ * @author Diversity
+ * Model the metric to be used
+ *
+ */
 public class MetricModel extends AbstractModel {
 	private Set<Metric> metrics = new HashSet<Metric>();
 
