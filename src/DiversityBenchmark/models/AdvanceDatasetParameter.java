@@ -33,7 +33,7 @@ public class AdvanceDatasetParameter extends AbstractModel {
 		maxTail = new Double(1.0);
 		minTail = new Double(0.8);
 		centgenDistance = new Double(0.5);
-		centgenName = CENTGEN.Circle.toString();
+		centgenName = CENTGEN.circle.toString();
 	}
 
 	public Double getMaxClusterDistance() {

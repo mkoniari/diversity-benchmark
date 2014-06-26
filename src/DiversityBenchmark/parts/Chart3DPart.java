@@ -157,8 +157,8 @@ public class Chart3DPart {
 		}
 
 		Scatter scatter = new Scatter(points, colors);
+		scatter.setWidth(3);
 		return scatter;
-
 	}
 
 	private Scatter testScatter() {

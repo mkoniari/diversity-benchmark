@@ -38,13 +38,6 @@ public class EvaluateHandler {
 	EPartService partService;
 	IEclipseContext context;
 
-	// @Execute
-	// public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell) {
-	// // sent signal to simulate model
-	// eval_start.send(EventConstants.FUNCTION_SIMULATING_START, "start");
-	//
-	//
-	// }
 	@SuppressWarnings("restriction")
 	@Execute
 	public void execute(EPartService partService, MApplication application,

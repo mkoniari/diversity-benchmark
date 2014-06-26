@@ -15,6 +15,10 @@
                name="applicationCSS"
                value="platform:/plugin/DiversityBenchmark/css/default.css">
          </property>
+         <property
+               name="appName"
+               value="DiversityBenchmark">
+         </property>
       </product>
    </extension>
 

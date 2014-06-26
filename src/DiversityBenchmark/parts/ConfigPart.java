@@ -191,31 +191,17 @@ public class ConfigPart extends AbstractPart {
 		algorithmTableViewer.setAllChecked(true);
 		metricTableViewer.setAllChecked(true);
 
-		// addValidator();
-		// updateWorkerChart();
-
 	}
 
 	private void bindAlgoParamValues() {
 		DataBindingContext ctx = new DataBindingContext();
 		IObservableSet modelSet = BeansObservables.observeSet(
 				Realm.getDefault(), selectedAlgorithm, "algorithms");
-		// ViewerSupport.bind(checkboxTableViewer, modelSet,
-		// BeanProperties.value(Algorithm.class, "name"));
 
 		IObservableSet widgetSet = ViewersObservables.observeCheckedElements(
 				algorithmTableViewer, Algorithm.class);
-		// modelSet = BeansObservables.obser(Realm.getDefault(),
-		// selectedAlgorithm, "algorithms");
 
 		ctx.bindSet(widgetSet, modelSet);
-
-		// .observe(key);
-		// ctx.bindSet(widgetSet, modelSet);
-		// IObservableValue modelValue = BeanProperties.value(
-		// AlgorithmParameter.class, btnBindding.get(key)).observe(
-		// algoPara);
-
 	}
 
 	private void bindMetricParamValues() {
@@ -271,28 +257,7 @@ public class ConfigPart extends AbstractPart {
 			} else {
 				UpdateValueStrategy strategy = new UpdateValueStrategy();
 				strategy.setAfterGetValidator(validator);
-				// strategy.setBeforeSetValidator(validator);
-				// strategy.setAfterConvertValidator(validator);
-				// strategy.setConverter(new Converter(String.class,
-				// Integer.class) {
-				//
-				// @Override
-				// public Object convert(Object o) {
-				// if (o == null) {
-				// return 0;
-				// }
-				// if (o instanceof String) {
-				// System.out.println("Convert");
-				// String str = (String) o;
-				// if (str.trim().isEmpty()) {
-				// return 0;
-				// }
-				// return Integer.valueOf(str);
-				// }
-				// return o;
-				// }
-				//
-				// });
+				
 				Binding bindValue = ctx.bindValue(widgetValue, modelValue,
 						strategy, null);
 				// Add some decorations
@@ -456,7 +421,7 @@ public class ConfigPart extends AbstractPart {
 				loadConfig(path);
 			}
 		});
-		loadConfig.setText("Load Config");
+		loadConfig.setText("Load Config");		
 
 		link = new Link(form.getBody(), SWT.NONE);
 		link.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1,
@@ -777,7 +742,9 @@ public class ConfigPart extends AbstractPart {
 		parent.setLayout(new GridLayout(2, false));
 
 		Label lblNumOfClusters = new Label(parent, SWT.NONE);
-		lblNumOfClusters.setText("No. Clusters");
+		lblNumOfClusters.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
+				false, false, 1, 1));
+		lblNumOfClusters.setText("#Topics");
 
 		txtNumOfClusters = new Text(parent, SWT.BORDER);
 		txtNumOfClusters.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
@@ -786,7 +753,7 @@ public class ConfigPart extends AbstractPart {
 		Label lblSizeOfClusters = new Label(parent, SWT.NONE);
 		lblSizeOfClusters.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
 				false, false, 1, 1));
-		lblSizeOfClusters.setText("Size");
+		lblSizeOfClusters.setText("#Data items");
 
 		txtSizeOfClusters = new Text(parent, SWT.BORDER);
 		txtSizeOfClusters.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
@@ -1172,7 +1139,7 @@ public class ConfigPart extends AbstractPart {
 		Element config = document.addElement("configuration");
 
 		Element resultSizeEle = config.addElement("resultSize");
-		resultSizeEle.setText("100");
+		resultSizeEle.setText("15");
 
 		switch (factor) {
 		case NumOfResults:

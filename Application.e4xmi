@@ -27,7 +27,7 @@
     </children>
     <mainMenu xmi:id="_jpQ6PYTbEeOIEtdKXcpHUg" elementId="menu:org.eclipse.ui.main.menu">
       <children xsi:type="menu:Menu" xmi:id="_jpQ6PoTbEeOIEtdKXcpHUg" label="File">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_jpQ6P4TbEeOIEtdKXcpHUg" toBeRendered="false" visible="false" label="Open" iconURI="platform:/plugin/DiversityBenchmark/icons/sample.gif" command="_jpQ6NITbEeOIEtdKXcpHUg"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_jpQ6P4TbEeOIEtdKXcpHUg" label="Load Real Data" iconURI="platform:/plugin/DiversityBenchmark/icons/sample.gif" command="_jpQ6NITbEeOIEtdKXcpHUg"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_jpQ6QITbEeOIEtdKXcpHUg" toBeRendered="false" visible="false" label="Save" iconURI="platform:/plugin/DiversityBenchmark/icons/save_edit.gif" command="_jpQ6N4TbEeOIEtdKXcpHUg"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_jpQ6QYTbEeOIEtdKXcpHUg" label="Quit" command="_jpQ6MITbEeOIEtdKXcpHUg"/>
       </children>
@@ -70,4 +70,10 @@
   <addons xmi:id="_jpQTJoTbEeOIEtdKXcpHUg" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
   <addons xmi:id="_jpQTJ4TbEeOIEtdKXcpHUg" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
   <addons xmi:id="_rnaFUC12EeKJg_Pk9LqbBQ" elementId="org.eclipse.e4.tools.emf.editor.addon.0" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
+  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXg" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXh" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXi" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXj" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXk" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXl" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
 </application:Application>

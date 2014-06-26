@@ -46,7 +46,7 @@ public class AdvanceConfigPart extends TitleAreaDialog {
 
 	private FormToolkit toolkit;
 	private Form form;
-	final String[] observerValues = new String[] { CENTGEN.Circle.toString(),
+	final String[] observerValues = new String[] { CENTGEN.circle.toString(),
 			CENTGEN.Line.toString() };
 
 	private Section sctnDataset;
